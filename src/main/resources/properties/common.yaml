@@ -1,0 +1,70 @@
+# HTTP config
+ 
+https:
+  port: '8081'
+  host: '0.0.0.0'
+  path: '/api/v1/*'
+  ReadTimeout: '300000'
+  papi:   
+      max:      
+          connections: '-1'
+      connections:    
+          idle:    
+              timeout: '300000'
+          timeout: '500000'
+      response:    
+          timeout: '300000'
+          buffer:    
+              size: '1024'
+      reconnection:
+         frequency: '50000'
+         count: '3'
+  pcs:   
+      max:      
+          connections: '-1'
+      connections:    
+          idle:    
+              timeout: '3000000'
+          timeout: '500000'
+      response:    
+          timeout: '3000000'
+          buffer:    
+              size: '1024'
+      reconnection:
+         frequency: '500000'
+         count: '3'
+
+
+
+#Error Configurations
+
+errors:
+  BAD_REQUEST: 
+    errorCode: '400'
+    errorType: 'BAD_REQUEST'
+  FILE_NOT_FOUND:
+    errorCode: '500'
+    errorType: 'FILE_NOT_FOUND'
+  EXPRESSION:
+    errorCode: '501'
+    errorType: 'EXPRESSION'
+  CONNECTIVITY: 
+    errorCode: '500'
+    errorType: 'CONNECTIVITY'
+  FORBIDDEN:
+    errorCode: '403'
+    errorType: 'FORBIDDEN'
+  RETRY_EXHAUSTED:
+    errorCode: '501'
+    errorType: 'RETRY_EXHAUSTED'
+  INTERNAL_SERVER_ERROR: 
+    errorCode: '500'
+    errorType: 'INTERNAL_SERVER_ERROR'
+  STREAM_MAXIMUM_SIZE_EXCEEDED:
+    errorCode: '500'
+    errorType: 'STREAM_MAXIMUM_SIZE_EXCEEDED'
+ 
+
+
+
+   

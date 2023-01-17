@@ -1,0 +1,41 @@
+##########HTTP Requester Configuration###################
+httpreq:
+  sftp:
+    papvntl1host: ""
+    papvntl2host: ""
+    pmpchost: ""
+    port: ""
+    path: ""
+    username: ""
+    password: ""
+  hulft:
+    host: ""
+    port: ""
+    path: ""
+    username: ""
+    password: ""
+  backup:
+    host: ""
+    port: ""
+    path: ""
+    username: ""
+    password: ""
+  response:
+    timeout: ""
+    buffer.size: "1024"
+  connection:
+    idle.timeout: "30000"
+  max.connections: "-1"
+
+#############Anypoint MQ Configuration ##############################
+anypointmq:
+  clientid: "3b109a1dd2a84b238e8eaa858e572009"
+  clientsecret: "C569f53f48e44a0aA0c7EcA5115c872f"  
+  url: "https://mq-us-east-1.anypoint.mulesoft.com/api/v1"
+  destination: "mq-common-email-utility-sit"  
+
+mule.env: "local"
+                            
+secret:
+   key: '![GmjenUtO6a1Q5t7umfwmSvcwAX/Hi2XUvySHc/0lJos=]'
+                                                                                                     

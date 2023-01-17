@@ -1,0 +1,62 @@
+#
+mule:
+  env: sit
+
+#API Manager config
+api:
+  autodiscovery:
+    id: ''
+  flowDirection: 'outbound'
+  source: 'SAP'
+ 
+# HTTP config
+https:
+  keystore:
+    path: 'keystores/${mule.env}-keystore.jks'
+    alias: 'servercert'
+    password: 'winter@123'    
+  papi:
+    clientId: ''
+    clientSecret: ''
+    host: 'sgst-orders-edi-papi-5ircui.internal-cci3mz.sgp-s1.cloudhub.io'
+    port: '8081'         
+    basepath: '/api/v1'
+    fplPath: '/fpl'   
+
+  utilities:    
+    papi:
+      clientId: 'cb6fea3d3d814a43a7042b301698194d'
+      clientSecret: '671B051dA51146B8A6eA36490C1B2F05'
+      host: 'sgst-audit-papi-5ircui.internal-cci3mz.sgp-s1.cloudhub.io'
+      port: '8081'   
+      basepath: '/api/v1'
+      path:
+        backup: '/backup'
+        notification: '/notification' 
+routing:
+  systems:
+    mm: 
+      po: ['EPRO','IPS']
+      pr: ['ECITA']
+    sd: ['SALES_EDI']
+    fi: ['CMS']
+          
+#Notification Configuration
+amq:
+  email:
+    toaddress: ['sabeena.shaik@sg.panasonic.com','pavan.ramadugula@sg.panasonic.com','umamaheswara.karanam@sg.panasonic.com']
+    publish: 
+      url: 'https://mq-us-east-1.anypoint.mulesoft.com/api/v1'
+      client:
+        id: '3b109a1dd2a84b238e8eaa858e572009'
+        secret: 'C569f53f48e44a0aA0c7EcA5115c872f'
+      path: 'mq-common-email-utility-sit'
+
+json:
+  logger:
+    application:
+      version: '1.0'
+      name: 'sample-json-logger'
+    env: 'local'
+    
+    
