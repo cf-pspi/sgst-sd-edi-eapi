@@ -18,6 +18,7 @@ http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/m
 	<!-- <configuration-properties doc:name="Configuration properties" doc:id="5cda403a-e192-4f4f-bf8b-351f4b21ef66" file="properties\local.yaml" /> -->
 	<!-- <api-gateway:autodiscovery apiId="${api.autodiscovery.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="83ded0e2-f303-492c-93d2-bc99082ace31" flowRef="sgst-pp-rationalization-edi-eapi-main" /> -->
 	
+	 <json-logger:config name="JSON_Logger_Config" doc:name="JSON Logger Config" doc:id="89c20580-939b-42d3-b3d6-ed6f1dcf9751" environment="${mule.env}" />
 	 <http:listener-config name="sgst-mm-edi-eapi-httpListenerConfig">
         <http:listener-connection host="${https.host}" port="${https.port}" readTimeout="${https.ReadTimeout}" protocol="HTTPS">
 			<tls:context >
@@ -63,7 +64,6 @@ http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/m
 	<configuration doc:name="Configuration" doc:id="9fdc6e14-eea2-44bd-ae1f-4da33e302e5d" defaultErrorHandler-ref="common-exception-handler" />
 	<configuration-properties doc:name="Configuration properties" doc:id="0ae26d89-d9b8-4645-8408-df638a7a9bb9" file="properties\common.yaml" />
 	<!-- <api-gateway:autodiscovery apiId="${api.autodiscovery.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="e3ac257f-70b1-4136-8ece-c23090da9c1f" flowRef="sgst-mm-edi-eapi-main" /> -->
-	<json-logger:config name="JSON_Logger_Config1" doc:name="JSON Logger Config" doc:id="132e9eaf-ed21-4d40-9a24-c4ef2eac22cf" environment="${mule.env}" />
 	
 	
 	<error-handler name="common-exception-handler" doc:id="2f64f20f-4127-4c66-98a1-5c4925c66219" >

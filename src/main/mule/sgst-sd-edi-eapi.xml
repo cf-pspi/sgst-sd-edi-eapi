@@ -10,7 +10,17 @@
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:router config-ref="sgst-sd-edi-eapi-config" />
+        <ee:transform doc:name="Set TransactionId" doc:id="c0f806b4-cd4e-4885-9768-e26c335bc55e" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="TransactionId" ><![CDATA[%dw 2.0
+output application/java
+---
+uuid()]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<apikit:router config-ref="sgst-sd-edi-eapi-config" />
         <error-handler ref="common-exception-handler" />
     </flow>
     <flow name="sgst-sd-edi-eapi-console">
