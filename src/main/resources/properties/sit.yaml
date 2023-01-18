@@ -42,15 +42,9 @@ routing:
     fi: ['CMS']
           
 #Notification Configuration
-amq:
+notification:
   email:
     toaddress: ['sabeena.shaik@sg.panasonic.com','pavan.ramadugula@sg.panasonic.com','umamaheswara.karanam@sg.panasonic.com']
-    publish: 
-      url: 'https://mq-us-east-1.anypoint.mulesoft.com/api/v1'
-      client:
-        id: '3b109a1dd2a84b238e8eaa858e572009'
-        secret: 'C569f53f48e44a0aA0c7EcA5115c872f'
-      path: 'mq-common-email-utility-sit'
 
 json:
   logger:

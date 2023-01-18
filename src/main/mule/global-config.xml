@@ -19,7 +19,7 @@ http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/m
 	<!-- <api-gateway:autodiscovery apiId="${api.autodiscovery.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="83ded0e2-f303-492c-93d2-bc99082ace31" flowRef="sgst-pp-rationalization-edi-eapi-main" /> -->
 	
 	 <json-logger:config name="JSON_Logger_Config" doc:name="JSON Logger Config" doc:id="89c20580-939b-42d3-b3d6-ed6f1dcf9751" environment="${mule.env}" />
-	 <http:listener-config name="sgst-mm-edi-eapi-httpListenerConfig">
+	 <http:listener-config name="sgst-sd-edi-eapi-httpListenerConfig">
         <http:listener-connection host="${https.host}" port="${https.port}" readTimeout="${https.ReadTimeout}" protocol="HTTPS">
 			<tls:context >
 				<tls:key-store type="jks" path="${https.keystore.path}" alias="${https.keystore.alias}" keyPassword="${https.keystore.password}" password="${https.keystore.password}" />
@@ -55,7 +55,6 @@ http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/m
 		</http:request-connection>
 	</http:request-config>
 	<global-property doc:name="Global Property" doc:id="e0beee06-29ca-4f42-9f8a-e4e2be392921" name="mule.env" value="sit" />
-	<global-property doc:name="Global Property" doc:id="99f234e7-17b8-4f88-896b-f2a95bab5a11" name="secret.key" value="PanasonicDev2022" />
 	<configuration-properties doc:name="Configuration properties" doc:id="73958c67-2798-496d-8bfb-413cdf2ce40d" file="properties/${mule.env}.yaml" />
 	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="656e20da-1993-42bb-83c3-ef1577efbbba" file="properties/${mule.env}.yaml" key="${secret.key}" />
 <!-- 	<anypoint-mq:config name="Anypoint_MQ_Config" doc:name="Anypoint MQ Config" doc:id="ae9f8078-06a6-4f3c-94fa-053ecc371a82" > -->
@@ -66,6 +65,7 @@ http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/m
 	<!-- <api-gateway:autodiscovery apiId="${api.autodiscovery.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="e3ac257f-70b1-4136-8ece-c23090da9c1f" flowRef="sgst-mm-edi-eapi-main" /> -->
 	
 	
+	<global-property doc:name="Global Property" doc:id="8662076a-faee-41c5-8eac-9ed093e2bb43" name="secret.key" value="test" />
 	<error-handler name="common-exception-handler" doc:id="2f64f20f-4127-4c66-98a1-5c4925c66219" >
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="dcc95b7a-feca-440e-abd1-887b6ce2973f" type="COMPRESSION:COULD_NOT_DECOMPRESS, COMPRESSION:INVALID_ARCHIVE, COMPRESSION:TOO_MANY_ENTRIES" >
 			<flow-ref doc:name="Flow Reference" doc:id="265d6a54-6c37-4998-9cce-1e6880719c91" name="global-config-propagate-error"/>
@@ -140,7 +140,7 @@ http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/m
 	
 </sub-flow>
 	<sub-flow name="global-config-email-notification" doc:id="0880d099-7c81-4775-a226-e11472dad97a" >
-		<ee:transform doc:name="Transform Message" doc:id="cca62187-6017-4269-9b88-5f447c9e649f" >
+		<ee:transform doc:name="Set Request" doc:id="cca62187-6017-4269-9b88-5f447c9e649f" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -149,7 +149,7 @@ var seperator = "/"
 {
     "apiName": app.name default "",
     "correlationID": vars.TransactionID default "",
-    "toAddress": Mule::p('amq.email.toaddress') default [],
+    "toAddress": Mule::p('notification.email.toaddress') default [],
     "fileName": vars.fileDetails.flatFileName default "NA",
     "filePath": ("/" ++ Mule::p('api.flowDirection')  ++ "/" ++ lower(vars.fileDetails.subsidiary) ++ "/" ++ lower(vars.fileDetails.externalSystem) ++ vars.sapiHttpPath  ++ "/" ++ lower(vars.fileDetails.flatFileName) ++ "." ++ vars.fileDetails.flatFileExtension) as String,
     "errorDetails":{
