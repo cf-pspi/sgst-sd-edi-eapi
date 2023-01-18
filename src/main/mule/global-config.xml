@@ -65,7 +65,7 @@ http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/m
 	<!-- <api-gateway:autodiscovery apiId="${api.autodiscovery.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="e3ac257f-70b1-4136-8ece-c23090da9c1f" flowRef="sgst-mm-edi-eapi-main" /> -->
 	
 	
-	<global-property doc:name="Global Property" doc:id="8662076a-faee-41c5-8eac-9ed093e2bb43" name="secret.key" value="test" />
+	<global-property doc:name="Global Property" doc:id="8662076a-faee-41c5-8eac-9ed093e2bb43" name="secret.key" value="test123456789125" />
 	<error-handler name="common-exception-handler" doc:id="2f64f20f-4127-4c66-98a1-5c4925c66219" >
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="dcc95b7a-feca-440e-abd1-887b6ce2973f" type="COMPRESSION:COULD_NOT_DECOMPRESS, COMPRESSION:INVALID_ARCHIVE, COMPRESSION:TOO_MANY_ENTRIES" >
 			<flow-ref doc:name="Flow Reference" doc:id="265d6a54-6c37-4998-9cce-1e6880719c91" name="global-config-propagate-error"/>
