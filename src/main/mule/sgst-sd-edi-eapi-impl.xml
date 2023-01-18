@@ -49,17 +49,21 @@ payload]]></ee:set-variable>
 			<flow-ref doc:name="Backup file in PCS" doc:id="916db69b-a895-41ec-b6d3-8b50a910fe05" name="sgst-sd-edi-impl-api-impl-backUp-flow" />
 		</async>
 		<flow-ref doc:name="Post File to SAPI" doc:id="84c3c8ce-b26b-417d-a9f9-1ad2d89e4d4e" name="sgst-sd-edi-eapi-impl-sapi-flow" />
-		<ee:transform doc:name="Frame - Response" doc:id="ddd94fd7-b0c7-4959-afe2-ccb070b0aade">
+		<choice doc:name="Choice" doc:id="209d1ab5-4d2a-4bed-a3b5-889b40da5957" >
+			<when expression="#[isEmpty(vars.errorMessage)]">
+				<ee:transform doc:name="Frame - Response" doc:id="ddd94fd7-b0c7-4959-afe2-ccb070b0aade">
 			<ee:message>
 				<ee:set-payload resource="dwl/responsePayload.dwl" />
 			</ee:message>
 		</ee:transform>
-		<json-logger:logger doc:name="Log Success Response" doc:id="51cb550d-ac2d-4f2b-b657-6f20bc876eba" config-ref="JSON_Logger_Config" message='#["End of the transaction for correlation Id " ++ vars.TransactionID]' tracePoint="END">
-			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json ---
+				<json-logger:logger doc:name="Log Success Response" doc:id="51cb550d-ac2d-4f2b-b657-6f20bc876eba" config-ref="JSON_Logger_Config" message='#["End of the transaction for correlation Id " ++ vars.TransactionID]' tracePoint="END">
+			<json-logger:content><![CDATA[#[import modules::JSONLoggerModule output application/json ---
 {
     payload: JSONLoggerModule::stringifyNonJSON(vars.eventAuditMessage) 
 }]]]></json-logger:content>
 		</json-logger:logger>
+			</when>
+		</choice>
 	</sub-flow>
 	<sub-flow name="sgst-sd-edi-impl-api-impl-backUp-flow" doc:id="58cb3365-7738-4aec-91e6-391c2c512f1a" >
 		<ee:transform doc:name="Set Request" doc:id="c1c5e010-a941-4015-8c0c-c5777ed70843">
@@ -139,12 +143,18 @@ else
 }]]]></http:headers>
 		</http:request>
 		</until-successful>
-			<error-handler>
+					<error-handler>
 				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="581fac44-340e-448d-a868-3c13c7f6d2a1" type="ANY">
 					<flow-ref doc:name="Flow Reference" doc:id="fdcf660a-9adc-4a4b-b0df-28b84f2621af" name="global-config-propagate-error" />
 				</on-error-propagate>
 			</error-handler>
 		</try>
+				<json-logger:logger doc:name="Log - SAPI Call Status" doc:id="05c40f06-7fae-41e1-9d4a-e71bc988a1f5" config-ref="JSON_Logger_Config" message='#["File published successfully to SAPI for correlation ID"  ++ vars.TransactionID]' tracePoint="AFTER_REQUEST" correlationId="#[vars.TransactionID]">
+			<json-logger:content><![CDATA[#[import modules::JSONLoggerModule output application/json ---
+{
+    payload: JSONLoggerModule::stringifyNonJSON(vars.eventAuditMessage) 
+}]]]></json-logger:content>
+		</json-logger:logger>
 			</when>
 			<otherwise >
 				<ee:transform doc:name="Set Error Response" doc:id="aec9c869-fb85-40c0-84d1-2fd3a223d87f" >
@@ -154,7 +164,7 @@ output application/json
 ---
 {
  errorCode: 500,
- errorMessage: "The provided external system is invalid",
+ errorMessage: "The provided external system: " ++ vars.fileDetails.externalSystem ++ " is invalid for fpl",
   errorType: 'DATA ERROR',
  
 correlationID :vars.TransactionID,
@@ -167,15 +177,27 @@ timestamp :now()
 output application/java
 ---
 500]]></ee:set-variable>
+						<ee:set-variable variableName="errorMessage" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+ errorCode: 500,
+ errorMessage: "The provided external system: " ++ vars.fileDetails.externalSystem ++ " is invalid for fpl",
+  errorType: 'DATA_ERROR',
+ 
+correlationID :vars.TransactionID,
+timestamp :now()
+}
+]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
+				<json-logger:logger doc:name="Logger" doc:id="38afe0fd-42e4-4bba-8cf5-b8a8ed7df90a" config-ref="JSON_Logger_Config" message='#["Exception occurred processing the transaction for correlation Id " ++ vars.TransactionID]'>
+					<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json ---
+{
+    payload: JSONLoggerModule::stringifyNonJSON(vars.errorMessage) 
+}]]]></json-logger:content>
+				</json-logger:logger>
 			</otherwise>
 		</choice>
-		<json-logger:logger doc:name="Log - SAPI Call Status" doc:id="05c40f06-7fae-41e1-9d4a-e71bc988a1f5" config-ref="JSON_Logger_Config" message='#["File published successfully to SAPI for correlation ID"  ++ vars.TransactionID]' tracePoint="AFTER_REQUEST" correlationId="#[vars.TransactionID]">
-			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json ---
-{
-    payload: JSONLoggerModule::stringifyNonJSON(vars.eventAuditMessage) 
-}]]]></json-logger:content>
-		</json-logger:logger>
 	</sub-flow>
 </mule>
