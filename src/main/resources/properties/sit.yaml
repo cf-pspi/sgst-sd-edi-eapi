@@ -14,14 +14,16 @@ https:
   keystore:
     path: 'keystores/${mule.env}-keystore.jks'
     alias: 'servercert'
-    password: 'winter@123'    
-  papi:
-    clientId: ''
-    clientSecret: ''
-    host: 'sgst-orders-edi-papi-5ircui.internal-cci3mz.sgp-s1.cloudhub.io'
-    port: '8081'         
-    basepath: '/api/v1'
-    fplPath: '/fpl'   
+    password: 'winter@123'
+
+  orders:    
+    papi:
+      clientId: 'cb6fea3d3d814a43a7042b301698194d'
+      clientSecret: '671B051dA51146B8A6eA36490C1B2F05'
+      host: 'sgst-orders-edi-papi-5ircui.internal-cci3mz.sgp-s1.cloudhub.io'
+      port: '8081'         
+      basepath: '/api/v1'
+      fplPath: '/fpl'   
 
   utilities:    
     papi:
