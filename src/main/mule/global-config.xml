@@ -164,8 +164,8 @@ var seperator = "/"
 ---
 {
 
-"client_id": Mule::p('http.utilities.papi.client_id'),
-"client_secret": Mule::p('http.utilities.papi.client_secret')
+"client_id": Mule::p('https.utilities.papi.client_id'),
+"client_secret": Mule::p('https.utilities.papi.client_secret')
 }]]]></http:headers>
 		</http:request>
 	</sub-flow>
