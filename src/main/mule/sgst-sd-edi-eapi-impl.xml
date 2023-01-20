@@ -48,7 +48,7 @@ payload]]></ee:set-variable>
 		<async doc:name="Async Call" doc:id="2dff04a0-c092-4dd7-903f-308979806df7" >
 			<flow-ref doc:name="Backup file in PCS" doc:id="916db69b-a895-41ec-b6d3-8b50a910fe05" name="sgst-sd-edi-impl-api-impl-backUp-flow" />
 		</async>
-		<flow-ref doc:name="Post File to SAPI" doc:id="84c3c8ce-b26b-417d-a9f9-1ad2d89e4d4e" name="sgst-sd-edi-eapi-impl-sapi-flow" />
+		<flow-ref doc:name="Post File to PAPI" doc:id="84c3c8ce-b26b-417d-a9f9-1ad2d89e4d4e" name="sgst-sd-edi-eapi-impl-sapi-flow" />
 		<choice doc:name="Choice" doc:id="209d1ab5-4d2a-4bed-a3b5-889b40da5957" >
 			<when expression="#[isEmpty(vars.errorMessage)]">
 				<ee:transform doc:name="Frame - Response" doc:id="ddd94fd7-b0c7-4959-afe2-ccb070b0aade">

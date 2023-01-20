@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="sgst-sd-edi-eapi-test-suite.xml" />
+	<munit:test name="post:\fpl:multipart\form-data:success-scenario" doc:id="9f8fe156-9d5f-4b61-b7f3-84d10ef32c84">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock backup" doc:id="6d1ec4d7-83ef-4998-9187-da98605969ab" processor="http:request" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Call PCS Backup" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock PAPI" doc:id="bfa29459-9fe3-47b9-839b-13e0622c92e1" processor="http:request" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Call PAPI - Post File" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="003eac06-6662-4b19-a44c-b10362c484b9" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="09fa964a-aa88-4f00-97f4-25e703a58077" >
+				<munit:payload value="#[output multipart/form-data  --- readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_ecita_payload.dwl')]" encoding="UTF-8" mediaType="multipart/form-data " />
+				<munit:attributes value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_variable_.dwl')]" />
+					<munit:variable key="TransactionID" value="123234535jdfhsdjkfghjk" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\bom:multipart\form-data:sgst-pp-edi-eapi-config" doc:id="0b6e32a5-2ec0-4c1a-a672-28377c0f8c32" name="post:\fpl:multipart\form-data:sgst-sd-edi-eapi-config" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call" doc:id="cb92db05-9720-480e-a29d-dabd00c1ae27" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Frame - Response" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="ddd94fd7-b0c7-4959-afe2-ccb070b0aade" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="post:\fpl:multipart\form-data:invalid-system" doc:id="116dd2d9-793f-4ba3-ac81-65ff6e4fa2b9">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock backup" doc:id="c3f5d56d-6290-4e97-9ffd-ee29e690f11d" processor="http:request" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Call PCS Backup" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock PAPI" doc:id="df6b0acb-815d-4d8f-be45-94ea1f79d895" processor="http:request" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Call PAPI - Post File" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="003eac06-6662-4b19-a44c-b10362c484b9" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="8281e34f-ae54-4130-b9a8-965f253ad7ab" >
+				<munit:payload value="#[output multipart/form-data  --- readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="multipart/form-data " />
+				<munit:attributes value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_variable_.dwl')]" />
+					<munit:variable key="TransactionID" value="123234535jdfhsdjkfghjk" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\bom:multipart\form-data:sgst-pp-edi-eapi-config" doc:id="18ba6f2c-e70a-4b58-85e3-6fdb84d31930" name="post:\fpl:multipart\form-data:sgst-sd-edi-eapi-config" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call" doc:id="bb7f9211-f9cb-422d-8e81-080c26c1ad17" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Set Error Response" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="aec9c869-fb85-40c0-84d1-2fd3a223d87f" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<!--  <munit:test name="sgst-sd-edi-eapi-test-suite-post:\processing-error" doc:id="e56ac574-52f6-4520-90b3-7d67928fe651" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock PAPI" doc:id="0cec21b7-7c7f-43ce-b376-3bc55c40d1bd" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Call PAPI - Post File" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="MULE:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock PCS Backup" doc:id="edc2109a-7022-4376-b826-258d75b86de4" processor="http:request" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Call PCS Backup" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="3ae19d80-071e-4755-a80c-0529366c9f06" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock email" doc:id="a6ff9bd6-67ba-43c9-baa3-41095f77da69" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Set Request" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="cca62187-6017-4269-9b88-5f447c9e649f" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="0f4affc0-4f37-4ba8-809f-271767ef0a98" >
+				<munit:payload value="#[output multipart/form-data  -&#45;&#45; readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_ecita_payload.dwl')]" encoding="UTF-8" mediaType="multipart/form-data " />
+				<munit:attributes value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_variable_.dwl')]" />
+					<munit:variable key="TransactionID" value="1233544567hgjkhjkk,jkl" />
+				</munit:variables>
+			</munit:set-event>
+			<munit-tools:mock-when doc:name="Mock email flowref" doc:id="420c80a7-adce-4e0a-a6a0-3b25c061e886" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="global-config-email-notification" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="adc62e09-1b8b-4015-abbc-638f714a2ece" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\processing-error:multipart\form-data:sgst-pp-edi-eapi-config" doc:id="081faf5c-43e7-4986-8518-3a04a1b207ae" name="post:\fpl:multipart\form-data:sgst-sd-edi-eapi-config" />
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:verify-call doc:name="Verify call" doc:id="64e667b2-a84d-4f6b-8eca-f7febf022c41" processor="ee:transform" atLeast="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Frame Error Message" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="1cd85a03-9f9d-4f7b-b4a1-ce9f49cae91c" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test> -->
+	<munit:test name="sgst-sd-edi-eapi-test-suite-sgst-sd-edi-eapi-BadRequest" doc:id="1a780c5d-7e64-4d51-9fde-e52194265d93" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIKitRouter" doc:id="9c045175-feac-4e5e-805f-12664283a97c" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sgst-sd-edi-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="536c0c7b-e615-4244-bafc-c24ce9844b9c">
+				<munit:payload encoding="UTF-8" mediaType="multipart/form-data " />
+				<munit:attributes value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables>
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<try doc:name="Try" doc:id="7c21121c-c504-4f82-9f2c-1ed82f63b95c" >
+				<flow-ref doc:name="Flow-ref to sgst-sd-edi-eapi-console" doc:id="6f8e7709-b9ef-4db9-b631-bee454e31238" name="sgst-sd-edi-eapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9fd3b1c3-7cd5-4eb7-9676-3612c5639803" >
+						<logger level="INFO" doc:name="Logger" doc:id="30a8186d-d7b4-4434-806c-7ebfe37e59d9" message="#[payload]"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="24281e26-704b-4972-b67b-320a28f5435f" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sgst-sd-edi-eapi-test-suite-sgst-sd-edi-eapi-APIKITNotFound" doc:id="2f6a02c3-d92a-4ec6-aa95-994cbf947fad" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIKitRouter" doc:id="670c8e5f-fa05-47e1-96bf-316488151021" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sgst-sd-edi-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="033dac85-836d-438d-9701-b9db4a2ec582" >
+				<munit:payload encoding="UTF-8" mediaType="multipart/form-data " />
+				<munit:attributes value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<try doc:name="Try" doc:id="4c0738c0-8318-46ca-b2d5-6d7695a153ea" >
+				<flow-ref doc:name="Flow-ref to sgst-sd-edi-eapi-console" doc:id="5905ad94-49e5-4f1b-b70a-64a26580a6f7" name="sgst-sd-edi-eapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7bbbf6c1-67eb-4a49-ba5e-94b66f8477e6" >
+						<logger level="INFO" doc:name="Logger" doc:id="34829b78-e297-47c6-b5c5-ffe9301b95b3" message="#[payload]" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="eb9d71b3-1a07-40c0-8a67-6a17689fc206" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sgst-sd-edi-eapi-test-suite-sgst-sd-edi-eapi-MethodNotAllowed" doc:id="f4cbf155-b5aa-48f3-8c14-321af7b2b0ae" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIKitRouter" doc:id="c4705b6c-6e4a-47f7-8056-33fbc835b67a" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sgst-sd-edi-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:METHOD_NOT_ALLOWED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="1a1bdab9-b6f2-4a8e-8301-0c2ad23bde8b" >
+				<munit:payload encoding="UTF-8" mediaType="multipart/form-data " />
+				<munit:attributes value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<try doc:name="Try" doc:id="b75aaf04-7665-479d-8b62-68c2af553a86" >
+				<flow-ref doc:name="Flow-ref to sgst-sd-edi-eapi-console" doc:id="2d829d67-8bc7-45f5-8813-aa2569787aa7" name="sgst-sd-edi-eapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="08161385-cd7d-4033-a379-06f23f3024da" >
+						<logger level="INFO" doc:name="Logger" doc:id="57549f00-6e14-4417-99dc-7ff07acd690c" message="#[payload]" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="57097dce-2fdf-4317-8eac-ccf206f2816b" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sgst-sd-edi-eapi-test-suite-sgst-sd-edi-eapi-NotAcceptable" doc:id="5b00aaf6-bb83-442a-b817-9ae54aa5cda0" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIKitRouter" doc:id="442d68b0-4f8f-4b01-a9ba-099b9a23b0dc" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sgst-sd-edi-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_ACCEPTABLE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="a5c06738-1447-42fb-a07d-a97479b53c5a" >
+				<munit:payload encoding="UTF-8" mediaType="multipart/form-data " />
+				<munit:attributes value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<try doc:name="Try" doc:id="a14b5a8c-f65c-4f2e-bcce-da5d7f053be9" >
+				<flow-ref doc:name="Flow-ref to sgst-sd-edi-eapi-console" doc:id="bf98101b-e6f1-4ac8-ae91-469c365ccd27" name="sgst-sd-edi-eapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7ba831e6-84d0-4e55-957c-17c1387034e5" >
+						<logger level="INFO" doc:name="Logger" doc:id="40e0a868-c3db-4fe9-8cfc-cb3d43e31f60" message="#[payload]" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="6e436f67-1bd6-4dda-b65d-dfba5b68c86b" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sgst-sd-edi-eapi-test-suite-sgst-sd-edi-eapi-UnsupportedMediaType" doc:id="9be138a7-374c-482c-bf22-c3f8c0b90fcf" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIKitRouter" doc:id="db4ce777-6d6a-4132-8a55-ae09d6c09bd7" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sgst-sd-edi-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:UNSUPPORTED_MEDIA_TYPE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="a54ebb9c-6d8d-4303-9518-9d635c5fcadc" >
+				<munit:payload encoding="UTF-8" mediaType="multipart/form-data " />
+				<munit:attributes value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<try doc:name="Try" doc:id="bf80ada8-ebc5-4dc2-9283-f50cd7304e6b" >
+				<flow-ref doc:name="Flow-ref to sgst-sd-edi-eapi-console" doc:id="e900a8b9-fd90-4738-b83a-4e03b3116513" name="sgst-sd-edi-eapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f7a411a8-5ad3-4499-bd29-7e87eaeb7bfc" >
+						<logger level="INFO" doc:name="Logger" doc:id="e6629699-703b-4c1e-9ed0-3d36dc4fafd1" message="#[payload]" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="1c9ac7f4-8eed-4bc7-b95f-a9e3d0e28cde" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sgst-sd-edi-eapi-test-suite-sgst-sd-edi-eapi-NotImplemented" doc:id="f3ae82ed-3692-417c-b0c0-0bdeae0fb54c" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIKitRouter" doc:id="d3a71304-3f10-45f9-a1d4-3e439498fcb1" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sgst-sd-edi-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_IMPLEMENTED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="3f9e9e6d-026e-4f0d-8073-aee04d7863c8" >
+				<munit:payload encoding="UTF-8" mediaType="multipart/form-data " />
+				<munit:attributes value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<try doc:name="Try" doc:id="cc97d348-19db-4b58-89c8-63a734da239e" >
+				<flow-ref doc:name="Flow-ref to sgst-sd-edi-eapi-console" doc:id="74ab4a20-5131-4ae4-a6a7-459957730e70" name="sgst-sd-edi-eapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1ce425aa-aa2c-4306-afcf-16b18d2780da" >
+						<logger level="INFO" doc:name="Logger" doc:id="99032e27-c87b-4f41-beb6-e6856c6294fa" message="#[payload]" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="405f0975-27b1-46d2-a0bd-d3ce69fa797c" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sgst-sd-edi-eapi-test-suite-sgst-sd-edi-eapi-BadGateway" doc:id="dba62c75-c245-44c7-ae20-7aa8e1dbdf74" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIKitRouter" doc:id="bd319e1d-ba5d-4977-898d-6bfe39c339fe" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sgst-sd-edi-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:BAD_GATEWAY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="2656a371-5aa6-403d-aa34-c0b5f9acd42a" >
+				<munit:payload encoding="UTF-8" mediaType="multipart/form-data " />
+				<munit:attributes value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<try doc:name="Try" doc:id="9b8bb4ca-353d-40d0-b4e0-43703be42fcf" >
+				<flow-ref doc:name="Flow-ref to sgst-sd-edi-eapi-console" doc:id="f8f5d824-b90b-4bbb-8d25-ad0a0dec11b0" name="sgst-sd-edi-eapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="fa36f893-586d-4f81-8684-57525826cc0a" >
+						<logger level="INFO" doc:name="Logger" doc:id="174af809-cda8-487b-acb0-6668745e1a03" message="#[payload]" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="36a1c82f-9c6e-4699-9079-f8da5ae65912" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sgst-sd-edi-eapi-test-suite-sgst-sd-edi-eapi-GatewayTimeout" doc:id="9e62cae4-4330-4d79-aa63-1d34e72c1ba2" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIKitRouter" doc:id="b82c10d9-53f9-4313-a2b2-b98dea2a00cc" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sgst-sd-edi-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:GATEWAY_TIMEOUT" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="d6ce67ff-c680-4348-a877-6407ad7af729" >
+				<munit:payload encoding="UTF-8" mediaType="multipart/form-data " />
+				<munit:attributes value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<try doc:name="Try" doc:id="c2018b5d-d291-4709-8088-699e8d257cda" >
+				<flow-ref doc:name="Flow-ref to sgst-sd-edi-eapi-console" doc:id="dde2b9f4-4089-4b0f-abd3-cfe062408b5d" name="sgst-sd-edi-eapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="832636da-4a14-4d80-8c04-0ef5f17db72c" >
+						<logger level="INFO" doc:name="Logger" doc:id="a8cfc541-e32b-44d9-8503-57848e12a98c" message="#[payload]" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="5c9b2181-0221-4476-b26d-49ea4782c6c7" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sgst-sd-edi-eapi-test-suite-sgst-sd-edi-eapi-Any" doc:id="5f5a7e6f-d86c-4a0a-8659-a90778d9cafc" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIKitRouter" doc:id="2440d7a6-08d4-4824-b4e9-70584f58738c" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sgst-sd-edi-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="ANY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="fc92107e-9f82-4bd3-b199-ed9321d0872f" >
+				<munit:payload encoding="UTF-8" mediaType="multipart/form-data " />
+				<munit:attributes value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<try doc:name="Try" doc:id="48586079-75a7-4b70-9711-59b310e9312f" >
+				<flow-ref doc:name="Flow-ref to sgst-sd-edi-eapi-console" doc:id="20f01f0e-acd8-46db-806d-3cfbff357517" name="sgst-sd-edi-eapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="25dcde8a-02b9-472e-93c0-d881bfe78f2d" >
+						<logger level="INFO" doc:name="Logger" doc:id="8d64c780-ac7a-4935-843f-ef0e89cdeca5" message="#[payload]" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="b62cdb43-10b3-4791-b099-2de1d50cd461" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sgst-sd-edi-eapi-test-suite-sgst-sd-edi-eapi-CouldNotDecompress" doc:id="4ab0bff0-e9ba-4ed7-81d8-7e5ce035d1b6" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIKitRouter" doc:id="223d7e9a-2412-4044-b039-bc6caf9acd88" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sgst-sd-edi-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="COMPRESSION:COULD_NOT_DECOMPRESS" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="8f1f1754-4e7d-4a94-95e6-b16262cd2094" >
+				<munit:payload encoding="UTF-8" mediaType="multipart/form-data " />
+				<munit:attributes value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<try doc:name="Try" doc:id="f6be2e4e-0ad3-435a-a696-a461abfa8806" >
+				<flow-ref doc:name="Flow-ref to sgst-sd-edi-eapi-console" doc:id="22034aa2-a19d-4b60-8bec-04e73285c08a" name="sgst-sd-edi-eapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="565b782d-917d-4474-8a8e-1f17adda5c50" >
+						<logger level="INFO" doc:name="Logger" doc:id="78f7ea5f-e3b9-451a-8b50-8180475637b5" message="#[payload]" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="bb5d250f-9c1e-4fd2-8e64-65337cf16e1a" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sgst-sd-edi-eapi-test-suite-sgst-sd-edi-eapi-CouldNotDecompress1" doc:id="585823c9-82ac-4ccf-9de6-864ab25ceb0f" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIKitRouter" doc:id="da111116-7ba1-4d75-9f96-6e5c92eada68" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sgst-sd-edi-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:FORBIDDEN" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="a4b82b38-e9db-4d33-811d-62a4c6e2d159" >
+				<munit:payload encoding="UTF-8" mediaType="multipart/form-data " />
+				<munit:attributes value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postfplmultipartformdatasgstsdedieapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<try doc:name="Try" doc:id="edd64fcc-31db-41cd-a1a1-74de3ebf37a5" >
+				<flow-ref doc:name="Flow-ref to sgst-sd-edi-eapi-console" doc:id="47a162e8-1fbe-47a6-ba23-20212c9c99ba" name="sgst-sd-edi-eapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="2cdfaa78-05b0-48c0-92bd-1894edc0d397" >
+						<logger level="INFO" doc:name="Logger" doc:id="194eb614-1086-4e4b-84a0-74b365761238" message="#[payload]" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="db738004-7503-4e47-a21c-6a22c7a94165" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
