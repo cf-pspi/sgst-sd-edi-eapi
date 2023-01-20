@@ -200,4 +200,204 @@ timestamp :now()
 			</otherwise>
 		</choice>
 	</sub-flow>
+	<sub-flow name="sgst-sd-edi-eapi-impl-3pl-flow" doc:id="bfbb2929-131b-4e34-b7d8-ff32ec30ef0d" >
+		<set-variable value="#[uuid()]" doc:name="Set Transaction ID" doc:id="02ed61d7-2571-436f-adbf-ca6def2522d7" variableName="transactionID"/>
+		<json-logger:logger doc:name="log-Initial status" doc:id="72c68a27-ac53-4ddd-9726-b1ba29565168" config-ref="JSON_Logger_Config" message="SGST-SD-EDI-EAPI_START_EVENT" correlationId="#[vars.transactionID]">
+			<json-logger:content ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+    "flowDirection": "in",
+    "source": "OneRoof",
+    "destination": "SAP",
+    "fileName": "NA",
+    "errorCode": "",
+    "errorMessage": "",
+    "subsidiary": "NA"
+}]]]></json-logger:content>
+		</json-logger:logger>
+		
+		<ee:transform doc:name="Set payload to send to SAPI" doc:id="a7342f97-30cc-469d-b2be-5d289193d710" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	"DoOwnershipChangeResponse": {
+		"CompanyCodeList": payload..DoOwnershipChangeResponse.CompanyCodeList,
+		"DoNumberList": payload..DoOwnershipChangeResponse.DoNumberList
+	}
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpConfig" ><![CDATA[output application/json
+---
+{ 
+	host:  Mule::p('https.oneroof.sapi.host'),
+	port:  Mule::p('https.oneroof.sapi.port'),
+	basepath:  Mule::p('https.oneroof.sapi.basepath'),
+	path:  Mule::p('https.oneroof.sapi.3pl.path')	
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="Call to SAPI" doc:id="c9cddaf0-b7c5-41c2-b6f0-6e9c6f80caa9" name="sgst-sd-edi-eapi-impl-sap-sapi-flow"/>
+		<ee:transform doc:name="Frame - Response" doc:id="cc293bc7-e5c0-4936-98bf-d9e1e4a56c0a">
+			<ee:message>
+				<ee:set-payload resource="dwl/responsePayload.dwl" />
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="Log Success Response" doc:id="44067a63-17b7-423f-8fe8-8a3a9901b297" config-ref="JSON_Logger_Config" message="Successfully posted the 3pl data to SAPI" tracePoint="AFTER_TRANSFORM">
+			<json-logger:content ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+    "flowDirection": "in",
+    "source": "OneRoof",
+    "destination": "SAP",
+    "fileName": "NA",
+    "errorCode": "",
+    "errorMessage": "",
+    "subsidiary": "NA"
+}]]]></json-logger:content>
+		</json-logger:logger>
+	</sub-flow>
+	
+	<sub-flow name="sgst-sd-edi-eapi-impl-current-stock-flow" doc:id="0da463a6-cf11-4c70-a1f3-3622da0d4391" >
+		<set-variable value="#[uuid()]" doc:name="Set Transaction ID" doc:id="e39c2ba7-4b92-4e86-ab38-6ca971c70156" variableName="transactionID"/>
+		<json-logger:logger doc:name="log-Initial status" doc:id="393a70c6-c7cb-4f86-8fc4-21dde1087f34" config-ref="JSON_Logger_Config" message="API START:INIT : Received API request" correlationId="#[vars.transactionID]">
+			<json-logger:content ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+    "flowDirection": "in",
+    "source": "OneRoof",
+    "destination": "SAP",
+    "fileName": "NA",
+    "errorCode": "",
+    "errorMessage": "",
+    "subsidiary": "NA"
+}]]]></json-logger:content>
+		</json-logger:logger>
+		
+		<ee:transform doc:name="Set payload to send to SAPI" doc:id="25220629-6417-4c42-bf5e-c4b3a3baaaf8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	"OneRoofRequest": {
+		"DTS": payload..OneRoofRequest.DTS,
+		"TypeOfData": payload..OneRoofRequest.TypeOfData,
+		"ReportRequestID": payload..OneRoofRequest.ReportRequestID,
+		"NSCcode": payload..OneRoofRequest.NSCcode,
+		"NSCStorLocCode": payload..OneRoofRequest.NSCStorLocCode,
+		"NSCMaterialNumber": payload..OneRoofRequest.NSCMaterialNumber,
+		"MfgCode": payload..OneRoofRequest.DTS,
+		"MfgStorLocCode": payload..OneRoofRequest.MfgStorLocCode,
+		"MfgMaterialNumber": payload..OneRoofRequest.MfgMaterialNumber
+	}
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpConfig" ><![CDATA[output application/json
+---
+{
+	host:  Mule::p('https.oneroof.sapi.host'),
+	port:  Mule::p('https.oneroof.sapi.port'),
+	path:  Mule::p('https.oneroof.sapi.path'),
+	path:  Mule::p('https.oneroof.sapi.currentStock.path')
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="Call to SAPI" doc:id="06fcb2e8-709d-45c2-ab49-b15a45cdec57" name="sgst-sd-edi-eapi-impl-sap-sapi-flow"/>
+		<ee:transform doc:name="Frame - Response" doc:id="1c30e43b-4dad-46dd-b1b8-716a48f5d806">
+			<ee:message>
+				<ee:set-payload resource="dwl/responsePayload.dwl" />
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="Log Success Response" doc:id="6127996f-e351-40c8-893b-6216d9b6ca7f" config-ref="JSON_Logger_Config" message="API END:COMPLETE : Received API request" tracePoint="AFTER_TRANSFORM">
+			<json-logger:content ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+    "flowDirection": "in",
+    "source": "OneRoof",
+    "destination": "SAP",
+    "fileName": "NA",
+    "errorCode": "",
+    "errorMessage": "",
+    "subsidiary": "NA"
+}]]]></json-logger:content>
+		</json-logger:logger>
+	</sub-flow>
+	<sub-flow name="sgst-sd-edi-eapi-impl-sap-sapi-flow" doc:id="53fc38f0-abba-4a76-8cc9-f02d0b7bde8b" >
+		<json-logger:logger doc:name="Log - SAPI Call" doc:id="7c2a41b5-dc7b-4b47-b0c1-f0ce5ded6a00" config-ref="JSON_Logger_Config" message="CALL API:START - Initiated a call to SGST SD SAP SAPI">
+			<json-logger:content ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+    "flowDirection": "in",
+    "source": "OneRoof",
+    "destination": "SAP",
+    "fileName": "NA",
+    "errorCode": "",
+    "errorMessage": "",
+    "subsidiary": "NA"
+}]]]></json-logger:content>
+		</json-logger:logger>
+		<try doc:name="Try" doc:id="1c2f911f-8acb-408d-a490-08e81e0bfa75" >
+			<until-successful maxRetries="${https.sapi.reconnection.count}" doc:name="Until Successful" doc:id="3854445b-8e06-44b4-8627-4799a91c7582" millisBetweenRetries="${https.sapi.reconnection.frequency}">
+				<http:request method="POST" doc:name="Call SAPI- Post Details to SAPI" doc:id="421d1689-36f1-4f43-a532-1cdd15355396" config-ref="HTTP_Request_For_SAPI" outputMimeType="application/xml" path="#[vars.httpConfig.path]" sendCorrelationId="ALWAYS">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"correlationID" : vars.transactionID,
+	"X-Client-Secret" :  vars.httpConfig.client_id,
+    "X-Client-ID" : vars.httpConfig.client_secret
+}]]]></http:headers>
+		</http:request>
+			</until-successful>
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="37504398-2b4b-4025-8127-9d0f0ea516c4" >
+					<flow-ref doc:name="Route to Error Handler" doc:id="61f51b40-7131-4f25-890f-5e5009c9515c" name="global-config-propagate-error" />
+				</on-error-propagate>
+			</error-handler>
+		</try>
+		<json-logger:logger doc:name="Log - SAPI Call Status" doc:id="3a90ae06-8408-46ab-b6d5-7de068c73815" config-ref="JSON_Logger_Config" message="SGST-SD-EDI-EAPI_FILE_SAPI_CALL_SUCCESS" tracePoint="AFTER_REQUEST" correlationId="#[vars.transactionID]">
+			<json-logger:content ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+    "flowDirection": "in",
+    "source": "OneRoof",
+    "destination": "SAP",
+    "fileName": "NA",
+    "errorCode": "",
+    "errorMessage": "",
+    "subsidiary": "NA"
+}]]]></json-logger:content>
+		</json-logger:logger>
+	</sub-flow>
+	<!-- <sub-flow name="sgst-pp-edi-eapi-sending-email-notification-flow" doc:id="fbc2ba27-4e29-4d3b-81f4-3022e83402d5" >
+		<ee:transform doc:name="Frame Error Message" doc:id="ebebcb4d-9476-4725-b1c1-6f6c8aa86ecb" >
+			<ee:message >
+				<ee:set-payload resource="dwl/AlertMessage.dwl" />
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="Log Frame Message" doc:id="6aeb4590-7854-47c1-bfdd-3bce97f5a470" config-ref="JSON_Logger_Config" message="Error Message" tracePoint="AFTER_TRANSFORM">
+			<json-logger:content ><![CDATA[#[%dw 2.0
+output application/json
+-&#45;&#45;
+{
+    "flowDirection": "out",
+    "source": "SAP",
+    "destination": vars.fileDetails.externalSystem default "",
+    "fileName": vars.fileDetails.flatFileName default "",
+    "errorCode": "",
+    "errorMessage": "",
+    "subsidiary": vars.fileDetails.subsidiary default ""
+}]]]></json-logger:content>
+		</json-logger:logger>
+		<anypoint-mq:publish doc:id="5caf48b1-6308-49ca-a477-dde388c909e5" config-ref="Anypoint_MQ_Config" destination="${amq.notification.email.publish.path}" doc:name="Publish Error Message to Queue" />
+	</sub-flow> -->
 </mule>

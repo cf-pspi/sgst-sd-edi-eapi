@@ -1,0 +1,10 @@
+%dw 2.0
+
+type auto_53fc38f0_abba_4a76_8cc9_f02d0b7bde8b_Output_Payload = {|
+  errorCode: String, 
+  errorMessage: String, 
+  errorType: String, 
+  correlationID: Null, 
+  timestamp: DateTime
+|}
+

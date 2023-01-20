@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
+<mule xmlns:apikit-soap="http://www.mulesoft.org/schema/mule/apikit-soap"
+	xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
 	xmlns:sockets="http://www.mulesoft.org/schema/mule/sockets"
-	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
-	xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd 
 http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
@@ -14,7 +14,8 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
-http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd">
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/mule/apikit-soap/current/mule-apikit-soap.xsd">
 	<!-- <configuration-properties doc:name="Configuration properties" doc:id="5cda403a-e192-4f4f-bf8b-351f4b21ef66" file="properties\local.yaml" /> -->
 	<!-- <api-gateway:autodiscovery apiId="${api.autodiscovery.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="83ded0e2-f303-492c-93d2-bc99082ace31" flowRef="sgst-pp-rationalization-edi-eapi-main" /> -->
 	
@@ -41,6 +42,19 @@ http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/m
 			</http:client-socket-properties>
 		</http:request-connection>
 	</http:request-config>
+	<http:request-config name="HTTP_Request_For_SAPI" doc:name="HTTP Request configuration" doc:id="6eda0b18-635d-4c6d-a1eb-2ed487dda1e3" basePath="#[vars.httpConfig.basepath]">
+		<http:request-connection maxConnections="${https.sapi.max.connections}" connectionIdleTimeout="${https.sapi.connections.idle.timeout}" responseBufferSize="${https.sapi.response.buffer.size}" host="#[vars.httpConfig.host]" tlsContext="TLS_Context" protocol="HTTPS">
+			<reconnection >
+				<reconnect frequency="${https.sapi.reconnection.frequency}" count="${https.sapi.reconnection.count}"/>
+			</reconnection>
+			<http:client-socket-properties >
+				<sockets:tcp-client-socket-properties connectionTimeout="50000" />
+			</http:client-socket-properties>
+		</http:request-connection>
+	</http:request-config>
+	<tls:context name="TLS_Context" doc:name="TLS Context" doc:id="03206e63-c7e3-4328-badc-5e0921c80440" >
+		<tls:key-store type="jks" path="mykeystore.jks" alias="servercert" keyPassword="winter@123" password="winter@123" />
+	</tls:context>
 	<http:request-config name="HTTP_Request_For_BackUPFile" doc:name="HTTP Request configuration" doc:id="e9d0180f-fb3a-4f19-b9e6-e8a84621c416" basePath="${https.utilities.papi.basepath}">
 		<http:request-connection host="${https.utilities.papi.host}" maxConnections="${https.pcs.max.connections}" connectionIdleTimeout="${https.pcs.connections.idle.timeout}" responseBufferSize="${https.pcs.response.buffer.size}" port="${https.utilities.papi.port}" protocol="HTTPS">
 			<reconnection >

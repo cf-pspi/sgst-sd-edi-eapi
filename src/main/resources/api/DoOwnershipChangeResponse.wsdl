@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="DoOwnershipChangeResponse" targetNamespace="http://SOA/Pana_APAC_OneRoof.WebServices:DoOwnershipChangeResponse" xmlns:soapjms="http://www.w3.org/2010/soapjms/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://SOA/Pana_APAC_OneRoof.WebServices:DoOwnershipChangeResponse" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://SOA/Pana_APAC_OneRoof.WebServices:DoOwnershipChangeResponse" xmlns:tns="http://SOA/Pana_APAC_OneRoof.WebServices:DoOwnershipChangeResponse" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+          <xsd:element name="DoOwnershipChangeResponse" type="tns:DoOwnershipChangeResponse"/>
+          <xsd:element name="DoOwnershipChangeResponseResponse" type="tns:DoOwnershipChangeResponseResponse"/>
+          <xsd:complexType name="DoOwnershipChangeResponse">
+            <xsd:sequence>
+              <xsd:element maxOccurs="unbounded" name="CompanyCodeList" nillable="true" type="xsd:string"/>
+              <xsd:element maxOccurs="unbounded" name="DoNumberList" nillable="true" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="DoOwnershipChangeResponseResponse">
+            <xsd:sequence>
+              <xsd:element name="RespCode" nillable="true" type="xsd:string"/>
+              <xsd:element name="RespMsg" nillable="true" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        	</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="DoOwnershipChangeResponse_PortType_DoOwnershipChangeResponseResponse">
+    <wsdl:part name="parameters" element="tns:DoOwnershipChangeResponseResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="DoOwnershipChangeResponse_PortType_DoOwnershipChangeResponse">
+    <wsdl:part name="parameters" element="tns:DoOwnershipChangeResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="DoOwnershipChangeResponse_PortType">
+    <wsdl:operation name="DoOwnershipChangeResponse">
+      <wsdl:input message="tns:DoOwnershipChangeResponse_PortType_DoOwnershipChangeResponse">
+    </wsdl:input>
+      <wsdl:output message="tns:DoOwnershipChangeResponse_PortType_DoOwnershipChangeResponseResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="Pana_APAC_OneRoof_WebServices_DoOwnershipChangeResponse_Binder" type="tns:DoOwnershipChangeResponse_PortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="DoOwnershipChangeResponse">
+      <soap:operation soapAction="Pana_APAC_OneRoof_WebServices_DoOwnershipChangeResponse_Binder_DoOwnershipChangeResponse" style="document"/>
+      <wsdl:input>
+        <soap:body parts="parameters" use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body parts="parameters" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Pana_APAC_OneRoof.WebServices.DoOwnershipChangeResponse">
+    <wsdl:port name="Pana_APAC_OneRoof_WebServices_DoOwnershipChangeResponse_Port" binding="tns:Pana_APAC_OneRoof_WebServices_DoOwnershipChangeResponse_Binder">
+      <soap:address location="http://soauat.ma.panasonic.com.sg:9650/ws/Pana_APAC_OneRoof.WebServices:DoOwnershipChangeResponse/Pana_APAC_OneRoof_WebServices_DoOwnershipChangeResponse_Port"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

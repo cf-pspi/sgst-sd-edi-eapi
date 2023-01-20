@@ -1,11 +1,27 @@
 # HTTP config
  
 https:
-  port: '8081'
+  port: '8086'
   host: '0.0.0.0'
+  soap:
+    path: '/api/*'
   path: '/api/v1/*'
   ReadTimeout: '300000'
   papi:   
+      max:      
+          connections: '-1'
+      connections:    
+          idle:    
+              timeout: '60000'
+          timeout: '60000'
+      response:    
+          timeout: '30000'
+          buffer:    
+              size: '1024'
+      reconnection:
+         frequency: '2000'
+         count: '2'
+  sapi:   
       max:      
           connections: '-1'
       connections:    

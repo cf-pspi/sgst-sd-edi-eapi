@@ -35,6 +35,18 @@ https:
       path:
         backup: '/backup'
         notification: '/notification' 
+        
+  oneroof:
+    sapi:
+      client_id: 'cb6fea3d3d814a43a7042b301698194d'
+      client_secret: '671B051dA51146B8A6eA36490C1B2F05'
+      host: 'sgst-sd-sap-sapi-5ircui.internal-cci3mz.sgp-s1.cloudhub.io'
+      port: '8081' 
+      basepath: '/api/v1'
+      3pl:    
+        path: '/third-party-logistics'
+      currentStock:    
+        path: '/current-stock'
 routing:
   systems:
     mm: 
@@ -52,7 +64,22 @@ json:
   logger:
     application:
       version: '1.0'
-      name: 'sample-json-logger'
-    env: 'local'
+      name: 'sgst-sd-edi-eapi'
+    env: 'sit'
+    
+http:              
+  oneroof:
+    client_id: 'cb6fea3d3d814a43a7042b301698194d'
+    client_secret: '671B051dA51146B8A6eA36490C1B2F05'
+    host: 'sgst-sd-sap-sapi-5ircui.internal-cci3mz.sgp-s1.cloudhub.io'
+    port: '8081' 
+    basepath: '/api/v1'
+    3pl:    
+      sapi:
+        path: '/third-party-logistics'   
+           
+    currentStock:    
+      sapi:
+          path: '/current-stock'
     
     
