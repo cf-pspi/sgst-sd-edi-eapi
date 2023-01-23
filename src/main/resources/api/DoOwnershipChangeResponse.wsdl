@@ -47,7 +47,7 @@
   </wsdl:binding>
   <wsdl:service name="Pana_APAC_OneRoof.WebServices.DoOwnershipChangeResponse">
     <wsdl:port name="Pana_APAC_OneRoof_WebServices_DoOwnershipChangeResponse_Port" binding="tns:Pana_APAC_OneRoof_WebServices_DoOwnershipChangeResponse_Binder">
-      <soap:address location="http://localhost:8081/api/v1/thirdPartyLogistics"/>
+      <soap:address location="https://localhost:8081/api/v1/thirdPartyLogistics"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

@@ -6,6 +6,6 @@ output application/json
  errorMessage: error.description default "The server is unable to process the request",
   errorType: Mule::p('errors.'++ error.errorType.identifier as String ++ '.errorType') default 'RUNTIME_ERROR',
  
-correlationID :vars.TransactionID,
+correlationID :vars.transactionID,
 timestamp :now()
 }

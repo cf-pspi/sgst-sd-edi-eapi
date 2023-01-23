@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:apikit-soap="http://www.mulesoft.org/schema/mule/apikit-soap" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
-http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/mule/apikit-soap/current/mule-apikit-soap.xsd">
+<mule xmlns:xml-module="http://www.mulesoft.org/schema/mule/xml-module" xmlns:apikit-soap="http://www.mulesoft.org/schema/mule/apikit-soap" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/mule/apikit-soap/current/mule-apikit-soap.xsd
+http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd">
     <flow name="sgst-sd-edi-eapi-main">
         <http:listener config-ref="sgst-sd-edi-eapi-httpListenerConfig" path="${https.path}">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -45,7 +46,7 @@ uuid()]]></ee:set-variable>
                   queryString: attributes.queryString
             }]]]></apikit-soap:attributes>
         </apikit-soap:router>
-		<error-handler ref="common-exception-handler" />
+		<error-handler ref="common-soap-exception-handler" />
     </flow>
     <apikit-soap:config name="soapkit-config-currentStock" port="Pana_APAC_OneRoof_WebServices_OneRoofRequest_Port" service="Pana_APAC_OneRoof.WebServices.OneRoofRequest" wsdlLocation="OneRoofRequest.wsdl" soapVersion="SOAP12"/>
     <flow name="sgst-sd-edi-main-current-stock" doc:id="e263440c-e9bd-4ae9-ad2c-1711c78b683d">
@@ -70,12 +71,13 @@ uuid()]]></ee:set-variable>
         </apikit-soap:router>
 		<error-handler ref="common-exception-handler" />
     </flow>
-    <flow name="OneRoofRequest:\soapkit-config-currentStock">
+    <flow name="OneRoofRequest:\soapkit-config-currentStock" doc:id="009165c6-812f-468e-81be-f9ea13171c7b">
 		<flow-ref doc:name="Route - Implementaation" doc:id="2fe3d75d-1f0d-4eb4-83d9-152a9f4ae552" name="sgst-sd-edi-eapi-impl-current-stock-flow"/>
+		<error-handler ref="common-soap-exception-handler" />
     </flow>
     <flow name="DoOwnershipChangeResponse:\soapkit-config">
 		<flow-ref doc:name="Route-Implementation" doc:id="ba369284-30b6-451c-a936-512dc321dd93" name="sgst-sd-edi-eapi-impl-3pl-flow"/>
-		<error-handler ref="common-exception-handler" />
+		<error-handler ref="common-soap-exception-handler" />
     </flow>
 	<flow name="sgst-sd-edi-eapi-console">
         <http:listener config-ref="sgst-sd-edi-eapi-httpListenerConfig" path="/console/*">

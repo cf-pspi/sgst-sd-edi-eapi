@@ -80,6 +80,108 @@ http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/m
 	
 	
 	<global-property doc:name="Global Property" doc:id="8662076a-faee-41c5-8eac-9ed093e2bb43" name="secret.key" value="PanasonicDev2022" />
+	<error-handler name="common-soap-exception-handler" doc:id="23a76056-bf9e-4bef-8f8a-21317537ce91" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="aa46a0d7-c98c-4b3b-a274-27b72268e942" type="ANY" when="attributes.maskedRequestPath contains('DoOwnershipChangeResponse')">
+			<json-logger:logger doc:name="Logger" doc:id="721b5347-5c42-4d5b-8e98-112672c50c69" config-ref="JSON_Logger_Config" message="API FAILURE: Error occured for thirdPartyLogistics" tracePoint="EXCEPTION">
+				<json-logger:content ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+    "flowDirection": "INBOUND",
+    "source": "OneRoof",
+    "destination": "SAP",
+    "fileName": "NA",
+    "errorCode": Mule::p('errors.'++ error.errorType.identifier as String ++ '.errorCode') default 500,
+    "errorMessage": error.description default "The server is unable to process the request",
+    "subsidiary": "NA",
+    "apiName": "sgst-sd-edi-eapi",
+    "action": "PROCESS",
+    "status": "Failure"
+}]]]></json-logger:content>
+			</json-logger:logger>
+			<ee:transform doc:name="Frame error msg for 3pl" doc:id="73dd2edc-caf6-400f-b8f2-0c3141d32fb8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns soapenv http://schemas.xmlsoap.org/soap/envelope/
+ns pana http://SOA/Pana_APAC_OneRoof.WebServices:DoOwnershipChangeResponse
+---
+soapenv#Envelope: {
+  'soapenv:Header': {},
+  'soapenv:Body': {
+  	pana#DoOwnershipChangeResponseResponse: {
+  		RespCode: Mule::p('errors.'++ error.errorType.identifier as String ++ '.errorCode') default 500,
+  		RespMsg: error.description default "The server is unable to process the request"
+  	}
+  }
+}	]]></ee:set-payload>
+			</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[Mule::p('errors.'++ error.errorType.identifier as String ++ '.errorCode') default 500]]></ee:set-variable>
+				</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Error notification details" doc:id="fcaa811c-4f71-4aee-a6c5-58f562d902dc" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+					<ee:set-variable resource="dwl/errorResponse.dwl" variableName="errorNotification" />
+				</ee:variables>
+		</ee:transform>
+			<async doc:name="Async" doc:id="53ec211e-878c-4b62-a493-43a99feae2be" >
+				<flow-ref doc:name="Route - Error Notification" doc:id="6cf74112-5eb8-44f3-86bc-ce932ec7a102" name="global-config-email-notification"/>
+			</async>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="b448423a-e2c0-45f8-abb9-43aa79fbac4e" type="ANY" when="attributes.maskedRequestPath contains('OneRoofRequest')">
+			<json-logger:logger doc:name="Logger" doc:id="02908f97-d85f-4f57-9230-65269fb8a881" config-ref="JSON_Logger_Config" message="API FAILURE: Error occured for CurrentStock" tracePoint="EXCEPTION">
+				<json-logger:content ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+    "flowDirection": "INBOUND",
+    "source": "OneRoof",
+    "destination": "SAP",
+    "fileName": "NA",
+    "errorCode": Mule::p('errors.'++ error.errorType.identifier as String ++ '.errorCode') default 500,
+    "errorMessage": error.description default "The server is unable to process the request",
+    "subsidiary": "NA",
+    "apiName": "sgst-sd-edi-eapi",
+    "action": "PROCESS",
+    "status": "Failure"
+}]]]></json-logger:content>
+			</json-logger:logger>
+			<ee:transform doc:name="Frame error msg for currentStock" doc:id="4efdf2e0-9f4a-4671-b0fd-235b70e3fee2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns soapenv http://schemas.xmlsoap.org/soap/envelope/
+ns pana http://10.81.25.59/Pana_APAC_OneRoof.WebServices:OneRoofRequest
+---
+soapenv#Envelope: {
+  'soapenv:Header': {},
+  'soapenv:Body': {
+  	pana#OneRoofRequestResponse: {
+  		ErrorCode: Mule::p('errors.'++ error.errorType.identifier as String ++ '.errorCode') default 500,
+  		ErrorMsg: error.description default "The server is unable to process the request"
+  	}
+  }
+}	]]></ee:set-payload>
+			</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[Mule::p('errors.'++ error.errorType.identifier as String ++ '.errorCode') default 500]]></ee:set-variable>
+				</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Error notification details" doc:id="cb144de0-de2a-4e21-9ada-3be59a4605a1" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+					<ee:set-variable resource="dwl/errorResponse.dwl" variableName="errorNotification" />
+				</ee:variables>
+		</ee:transform>
+			<async doc:name="Async" doc:id="7b76718c-d37b-42ad-8f99-bca9c7f17e7d" >
+				<flow-ref doc:name="Route - Error Notification" doc:id="9a06d026-7ae6-4954-bbd8-3b7d4aa0edb3" name="global-config-email-notification"/>
+			</async>
+		</on-error-propagate>
+	</error-handler>
 	<error-handler name="common-exception-handler" doc:id="2f64f20f-4127-4c66-98a1-5c4925c66219" >
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="dcc95b7a-feca-440e-abd1-887b6ce2973f" type="COMPRESSION:COULD_NOT_DECOMPRESS, COMPRESSION:INVALID_ARCHIVE, COMPRESSION:TOO_MANY_ENTRIES" >
 			<flow-ref doc:name="Flow Reference" doc:id="265d6a54-6c37-4998-9cce-1e6880719c91" name="global-config-propagate-error"/>
@@ -142,6 +244,18 @@ http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/m
 
 				</ee:message>
 			<ee:variables >
+				<ee:set-variable variableName="errorNotification" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+ errorCode: Mule::p('errors.'++ error.errorType.identifier as String ++ '.errorCode') default 500,
+ errorMessage: error.description default "The server is unable to process the request",
+  errorType: Mule::p('errors.'++ error.errorType.identifier as String ++ '.errorType') default 'RUNTIME_ERROR',
+ 
+correlationID :vars.transactionID,
+timestamp :now()
+}
+]]></ee:set-variable>
 			</ee:variables>
 			
 </ee:transform>
@@ -162,18 +276,20 @@ var seperator = "/"
 ---
 {
     "apiName": app.name default "",
-    "correlationID": vars.TransactionID default "",
+    "correlationID": vars.transactionID default "",
     "toAddress": Mule::p('notification.email.toaddress') default [],
     "fileName": vars.fileDetails.flatFileName default "NA",
-    "filePath": ("/" ++ Mule::p('api.flowDirection')  ++ "/" ++ lower(vars.fileDetails.subsidiary) ++ "/" ++ lower(vars.fileDetails.externalSystem) ++ vars.sapiHttpPath  ++ "/" ++ lower(vars.fileDetails.flatFileName) ++ "." ++ vars.fileDetails.flatFileExtension) as String,
+    "filePath": ("/" ++ Mule::p('api.flowDirection')  ++ "/" ++ lower(vars.fileDetails.subsidiary) ++ "/" ++ lower(vars.fileDetails.externalSystem) ++ vars.sapiHttpPath  ++ "/" ++ lower(vars.fileDetails.flatFileName) ++ "." ++ vars.fileDetails.flatFileExtension) as String default "NA",
     "errorDetails":{
-        "errorCode":payload.errorCode default "",
-        "errorDesc":payload.errorMessage default ""
+        "errorCode": vars.errorNotification.errorCode default "",
+        "errorDesc": vars.errorNotification.errorMessage default ""
    }}
  ]]></ee:set-payload>
 			</ee:message>
+			<ee:variables >
+			</ee:variables>
 		</ee:transform>
-		<http:request method="POST" doc:name="send-email-notification" doc:id="73a83a94-6f32-40d5-a9d0-90ce2a79d4ef" config-ref="HTTP_Request_For_BackUPFile" path="${https.utilities.papi.path.notification}" outputMimeType="application/json">
+		<http:request method="POST" doc:name="send-email-notification" doc:id="73a83a94-6f32-40d5-a9d0-90ce2a79d4ef" config-ref="HTTP_Request_For_BackUPFile" path="${https.utilities.papi.path.notification}" outputMimeType="application/json" sendCorrelationId="ALWAYS">
 			<http:headers ><![CDATA[#[output application/java
 ---
 {

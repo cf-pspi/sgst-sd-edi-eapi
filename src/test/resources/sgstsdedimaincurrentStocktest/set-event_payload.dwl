@@ -8,12 +8,19 @@ do {
       {
         soapenv#"Header": null,
         soapenv#"Body": do {
-          ns pana http://SOA/Pana_APAC_OneRoof.WebServices:DoOwnershipChangeResponse
+          ns pana http://10.81.25.59/Pana_APAC_OneRoof.WebServices:OneRoofRequest
           ---
           {
-            pana#"DoOwnershipChangeResponse": {
-              "CompanyCodeList": "1",
-              "DoNumberList": "2"
+            pana#"OneRoofRequest": {
+              "DTS": "1",
+              "TypeOfData": "2",
+              "ReportRequestID": "",
+              "NSCcode": "",
+              "NSCStorLocCode": "",
+              "NSCMaterialNumber": "",
+              "MfgCode": "",
+              "MfgStorLocCode": "",
+              "MfgMaterialNumber": ""
             }
           }
         }
