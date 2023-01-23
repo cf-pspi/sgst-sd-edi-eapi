@@ -312,7 +312,7 @@ output application/xml
 		<flow-ref doc:name="Call to SAPI" doc:id="06fcb2e8-709d-45c2-ab49-b15a45cdec57" name="sgst-sd-edi-eapi-impl-sap-sapi-flow"/>
 		<ee:transform doc:name="Frame - Response" doc:id="1c30e43b-4dad-46dd-b1b8-716a48f5d806">
 			<ee:message>
-				<ee:set-payload resource="dwl/responsePayload.dwl" />
+				<ee:set-payload resource="dwl/currentStockResponsePayload.dwl" />
 			</ee:message>
 		</ee:transform>
 		<json-logger:logger doc:name="Log Success Response" doc:id="6127996f-e351-40c8-893b-6216d9b6ca7f" config-ref="JSON_Logger_Config" message="API END:COMPLETE : Received API request" tracePoint="AFTER_TRANSFORM">

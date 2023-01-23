@@ -48,7 +48,7 @@ uuid()]]></ee:set-variable>
 		<error-handler ref="common-exception-handler" />
     </flow>
     <apikit-soap:config name="soapkit-config-currentStock" port="Pana_APAC_OneRoof_WebServices_OneRoofRequest_Port" service="Pana_APAC_OneRoof.WebServices.OneRoofRequest" wsdlLocation="OneRoofRequest.wsdl" soapVersion="SOAP12"/>
-    <flow name="sgst-sd-edi-main-current-stock">
+    <flow name="sgst-sd-edi-main-current-stock" doc:id="e263440c-e9bd-4ae9-ad2c-1711c78b683d">
         <http:listener config-ref="sgst-sd-edi-eapi-httpListenerConfig" path="${https.current-stock.path}">
             <http:response statusCode="#[attributes.additionalTransportData.statusCode default 200]">
                 <http:headers><![CDATA[#[attributes.protocolHeaders default {}]]]></http:headers>

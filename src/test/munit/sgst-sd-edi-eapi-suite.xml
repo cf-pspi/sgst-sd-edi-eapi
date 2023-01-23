@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="sgst-sd-edi-eapi-suite.xml" />
+	<munit:test name="sgst-sd-edi-main-3pl-test" doc:id="a69d0048-e940-4d4a-b963-4ef1f65a8f2d" >
+		<munit:enable-flow-sources >
+			<munit:enable-flow-source value="DoOwnershipChangeResponse:\soapkit-config" />
+		</munit:enable-flow-sources>
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="24ab09f2-941c-4c44-9f6d-40fb94ca68fe" >
+				<munit:payload value="#[output text/xml  --- readUrl('classpath://sgstsdedimain3pltest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="text/xml " />
+				<munit:attributes value="#[readUrl('classpath://sgstsdedimain3pltest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+			<munit-tools:mock-when doc:name="Mock when calling SAPI" doc:id="fe632dc6-977c-46c5-b457-e9f3b42621b5" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="421d1689-36f1-4f43-a532-1cdd15355396" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/xml --- readUrl('classpath://sgstsdedimain3pltest\set-response.dwl')]" mediaType="application/xml" encoding="UTF-8" />
+				</munit-tools:then-return>
+
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to sgst-sd-edi-main-3pl" doc:id="562e993e-e942-4196-84c6-6dad14e79957" name="sgst-sd-edi-main-3pl"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="27c1f682-4059-4f34-b679-1c2aafc9e5bb" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	
+	<munit:test name="sgst-sd-edi-main-3pl-impl-test" doc:id="5d72bc3e-1960-4b12-847e-44fcc4dcc1ea" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="42cceb89-77c1-4377-ac7a-d3f69a6a3f97" >
+				<munit:payload value="#[output text/xml  --- readUrl('classpath://sgstsdedimain3pltest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="text/xml " />
+				<munit:attributes value="#[readUrl('classpath://sgstsdedimain3pltest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+			<munit-tools:mock-when doc:name="Mock when calling SAPI" doc:id="b3c1cc16-f6af-4913-9006-e665072f0500" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="421d1689-36f1-4f43-a532-1cdd15355396" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/xml --- readUrl('classpath://sgstsdedimain3pltest\set-response.dwl')]" mediaType="application/xml" encoding="UTF-8" />
+				</munit-tools:then-return>		
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to sgst-sd-edi-main-3pl" doc:id="b7a37907-d499-4cd3-9f56-1c833d35a82a" name="sgst-sd-edi-eapi-impl-3pl-flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="76580259-6de7-4330-8a81-550199903ddd" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sgst-sd-edi-main-currentStock-test" doc:id="dbda7e06-3b77-4893-88f4-cf839fce316d" >
+		<munit:enable-flow-sources >
+			<munit:enable-flow-source value="OneRoofRequest:\soapkit-config-currentStock" />
+		</munit:enable-flow-sources>
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="2c39c427-fc90-485b-820f-70c70d05f055" >
+				<munit:payload value="#[output text/xml  --- readUrl('classpath://sgstsdedimain3pltest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="text/xml " />
+				<munit:attributes value="#[readUrl('classpath://sgstsdedimain3pltest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+			<munit-tools:mock-when doc:name="Mock when calling SAPI" doc:id="1d80e202-8e87-4d79-8b07-43856de7022b" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="421d1689-36f1-4f43-a532-1cdd15355396" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/xml --- readUrl('classpath://sgstsdedimain3pltest\set-response.dwl')]" mediaType="application/xml" encoding="UTF-8" />
+				</munit-tools:then-return>
+
+			
+
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to sgst-sd-edi-main-3pl" doc:id="364e6e5b-65a1-430e-a974-762d3cc52ca6" name="sgst-sd-edi-main-current-stock"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="08d50436-d52a-4c1f-b1d9-fddcdfe0d8de" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sgst-sd-edi-main-currentStock-impl-test" doc:id="c8fc0d50-913e-4341-a2d8-bda8fcd56805" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="b00038ad-4bd2-4a6b-bbdc-63f07756370f" >
+				<munit:payload value="#[output text/xml  --- readUrl('classpath://sgstsdedimain3pltest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="text/xml " />
+				<munit:attributes value="#[readUrl('classpath://sgstsdedimain3pltest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+			<munit-tools:mock-when doc:name="Mock when calling SAPI" doc:id="c04cff5c-4c9c-497e-a732-543720f86b60" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="421d1689-36f1-4f43-a532-1cdd15355396" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/xml --- readUrl('classpath://sgstsdedimaincurrentStocktest\set-response.dwl')]" mediaType="application/xml" encoding="UTF-8" />
+				</munit-tools:then-return>		
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to sgst-sd-edi-main-3pl" doc:id="387fa547-a6eb-4d9d-a96f-beb6463ef177" name="sgst-sd-edi-eapi-impl-current-stock-flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="23fd6248-7e46-4ecc-81e1-f68edcbaa47b" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+
+</mule>
