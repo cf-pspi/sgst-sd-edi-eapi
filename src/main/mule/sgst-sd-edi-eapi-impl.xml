@@ -346,17 +346,15 @@ output application/json
 }]]]></json-logger:content>
 		</json-logger:logger>
 		<try doc:name="Try" doc:id="1c2f911f-8acb-408d-a490-08e81e0bfa75" >
-			<until-successful maxRetries="${https.sapi.reconnection.count}" doc:name="Until Successful" doc:id="3854445b-8e06-44b4-8627-4799a91c7582" millisBetweenRetries="${https.sapi.reconnection.frequency}">
 				<http:request method="POST" doc:name="Call SAPI- Post Details to SAPI" doc:id="421d1689-36f1-4f43-a532-1cdd15355396" config-ref="HTTP_Request_For_SAPI" outputMimeType="application/xml" path="#[vars.httpConfig.path]" sendCorrelationId="ALWAYS">
 			<http:headers><![CDATA[#[output application/java
 ---
 {
 	"correlationID" : vars.transactionID,
-	"X-Client-Secret" :  vars.httpConfig.client_id,
-    "X-Client-ID" : vars.httpConfig.client_secret
+	"X-Client-Secret" :  p('https.oneroof.sapi.client_id'),
+    "X-Client-ID" : p('https.oneroof.sapi.client_secret')
 }]]]></http:headers>
 		</http:request>
-			</until-successful>
 			<error-handler >
 				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="37504398-2b4b-4025-8127-9d0f0ea516c4" >
 					<flow-ref doc:name="Route to Error Handler" doc:id="61f51b40-7131-4f25-890f-5e5009c9515c" name="global-config-propagate-error" />

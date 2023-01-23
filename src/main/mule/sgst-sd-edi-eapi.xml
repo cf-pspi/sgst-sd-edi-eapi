@@ -24,12 +24,9 @@ uuid()]]></ee:set-variable>
 		<apikit:router config-ref="sgst-sd-edi-eapi-config" />
         <error-handler ref="common-exception-handler" />
     </flow>
-	<http:listener-config name="api-httpListenerConfig">
-        <http:listener-connection host="0.0.0.0" port="8082"/>
-    </http:listener-config>
     <apikit-soap:config name="soapkit-config" port="Pana_APAC_OneRoof_WebServices_DoOwnershipChangeResponse_Port" service="Pana_APAC_OneRoof.WebServices.DoOwnershipChangeResponse" wsdlLocation="DoOwnershipChangeResponse.wsdl" soapVersion="SOAP12"/>
-    <flow name="api-main">
-        <http:listener path="${https.soap.path}" config-ref="sgst-sd-edi-eapi-httpListenerConfig">
+    <flow name="sgst-sd-edi-main-3pl">
+        <http:listener path="${https.3pl.path}" config-ref="sgst-sd-edi-eapi-httpListenerConfig">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:response>
@@ -49,6 +46,32 @@ uuid()]]></ee:set-variable>
             }]]]></apikit-soap:attributes>
         </apikit-soap:router>
 		<error-handler ref="common-exception-handler" />
+    </flow>
+    <apikit-soap:config name="soapkit-config-currentStock" port="Pana_APAC_OneRoof_WebServices_OneRoofRequest_Port" service="Pana_APAC_OneRoof.WebServices.OneRoofRequest" wsdlLocation="OneRoofRequest.wsdl" soapVersion="SOAP12"/>
+    <flow name="sgst-sd-edi-main-current-stock">
+        <http:listener config-ref="sgst-sd-edi-eapi-httpListenerConfig" path="${https.current-stock.path}">
+            <http:response statusCode="#[attributes.additionalTransportData.statusCode default 200]">
+                <http:headers><![CDATA[#[attributes.protocolHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[attributes.additionalTransportData.statusCode default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[attributes.protocolHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit-soap:router config-ref="soapkit-config-currentStock">
+            <apikit-soap:attributes><![CDATA[#[%dw 2.0
+              output application/java
+              ---
+              {
+                  headers: attributes.headers,
+                  method: attributes.method,
+                  queryString: attributes.queryString
+            }]]]></apikit-soap:attributes>
+        </apikit-soap:router>
+		<error-handler ref="common-exception-handler" />
+    </flow>
+    <flow name="OneRoofRequest:\soapkit-config-currentStock">
+		<flow-ref doc:name="Route - Implementaation" doc:id="2fe3d75d-1f0d-4eb4-83d9-152a9f4ae552" name="sgst-sd-edi-eapi-impl-current-stock-flow"/>
     </flow>
     <flow name="DoOwnershipChangeResponse:\soapkit-config">
 		<flow-ref doc:name="Route-Implementation" doc:id="ba369284-30b6-451c-a936-512dc321dd93" name="sgst-sd-edi-eapi-impl-3pl-flow"/>
