@@ -38,10 +38,21 @@ payload]]></ee:set-variable>
 
 </ee:variables>
 		</ee:transform>
-		<json-logger:logger doc:name="Log - Initial status" doc:id="a1c05f5d-f5f2-42eb-a165-d2433ab61e64" config-ref="JSON_Logger_Config" message='#["Start of the transaction for correlation Id " ++ vars.TransactionID]' correlationId="#[vars.TransactionID]">
-			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json ---
+		<json-logger:logger doc:name="Log - Initial status" doc:id="a1c05f5d-f5f2-42eb-a165-d2433ab61e64" config-ref="JSON_Logger_Config" message='API START: INIT - Received API request.' correlationId="#[vars.transactionId]">
+			<json-logger:content ><![CDATA[#[%dw 2.0
+output application/json
+---
 {
-    payload: JSONLoggerModule::stringifyNonJSON(vars.eventAuditMessage) 
+   "flowDirection": Mule::p('api.flowDirection'),
+   "source": Mule::p('api.source'),
+   "target": vars.fileDetails.externalSystem default "",
+   "fileName": if(vars.fileDetails.flatFileName != null and vars.fileDetails.flatFileExtension != null)(vars.fileDetails.flatFileName as String ++ vars.fileDetails.flatFileExtension as String) else "" ,
+   "errorCode": "",
+   "errorMessage": "",
+   "subsidiary": vars.fileDetails.subsidiary default "",
+   "apiName": Mule::p('api.name'),
+   "action": Mule::p('api.action.api-start'),
+   "status": Mule::p('api.status.init')
 }]]]></json-logger:content>
 
 		</json-logger:logger>
@@ -56,10 +67,21 @@ payload]]></ee:set-variable>
 				<ee:set-payload resource="dwl/responsePayload.dwl" />
 			</ee:message>
 		</ee:transform>
-				<json-logger:logger doc:name="Log Success Response" doc:id="51cb550d-ac2d-4f2b-b657-6f20bc876eba" config-ref="JSON_Logger_Config" message='#["End of the transaction for correlation Id " ++ vars.TransactionID]' tracePoint="END">
-			<json-logger:content><![CDATA[#[import modules::JSONLoggerModule output application/json ---
+				<json-logger:logger doc:name="Log Success Response" doc:id="51cb550d-ac2d-4f2b-b657-6f20bc876eba" config-ref="JSON_Logger_Config" message='API END: Complete - Received API request.' tracePoint="END" correlationId="#[vars.transactionId]">
+			<json-logger:content><![CDATA[#[%dw 2.0
+output application/json
+---
 {
-    payload: JSONLoggerModule::stringifyNonJSON(vars.eventAuditMessage) 
+   "flowDirection": Mule::p('api.flowDirection'),
+   "source": Mule::p('api.source'),
+   "target": vars.fileDetails.externalSystem default "",
+   "fileName": if(vars.fileDetails.flatFileName != null and vars.fileDetails.flatFileExtension != null)(vars.fileDetails.flatFileName as String ++ vars.fileDetails.flatFileExtension as String) else "" ,
+   "errorCode": "",
+   "errorMessage": "",
+   "subsidiary": vars.fileDetails.subsidiary default "",
+   "apiName": Mule::p('api.name'),
+   "action": Mule::p('api.action.api-start'),
+   "status": Mule::p('api.status.init')
 }]]]></json-logger:content>
 		</json-logger:logger>
 			</when>
@@ -68,7 +90,7 @@ payload]]></ee:set-variable>
 	<sub-flow name="sgst-sd-edi-impl-api-impl-backUp-flow" doc:id="58cb3365-7738-4aec-91e6-391c2c512f1a" >
 		<ee:transform doc:name="Set Request" doc:id="c1c5e010-a941-4015-8c0c-c5777ed70843">
 				<ee:message>
-					<ee:set-payload><![CDATA[%dw 2.0
+				<ee:set-payload ><![CDATA[%dw 2.0
 output multipart/form-data
 input payload multipart/form-data
 ---
@@ -78,13 +100,15 @@ input payload multipart/form-data
   	}
 }]]></ee:set-payload>
 				</ee:message>
+			<ee:variables >
+			</ee:variables>
 			</ee:transform>
 		<try doc:name="Try" doc:id="c7699384-8db6-43d5-8938-db682c75afa7" >
 			<until-successful maxRetries="${https.pcs.reconnection.count}" doc:name="Until Successful" doc:id="537a6523-462a-45a4-bafe-c020fa9bf6e7" millisBetweenRetries="${https.pcs.reconnection.frequency}">
 			<http:request method="POST" doc:name="Call PCS Backup" doc:id="3ae19d80-071e-4755-a80c-0529366c9f06" config-ref="HTTP_Request_For_BackUPFile" path="${https.utilities.papi.path.backup}" outputMimeType="multipart/form-data">
 					<http:headers><![CDATA[#[{
 "direction": Mule::p('api.flowDirection'),
-"correlationID" :vars.TransactionID,
+"correlationID" :vars.transactionID,
 "externalSystem" : vars.fileDetails.externalSystem,
 "fileType" : vars.sapiHttpPath replace "/" with "" ,
 "fileName" :vars.fileDetails.flatFileName,
@@ -101,7 +125,7 @@ input payload multipart/form-data
 				</on-error-propagate>
 			</error-handler>
 		</try>
-		<json-logger:logger doc:name="Log - Backup Status" doc:id="d4475cb8-572c-454c-8399-05262661165c" config-ref="JSON_Logger_Config" message='#["File backup to PCS Successful for correlation Id " ++ vars.TransactionID]' tracePoint="AFTER_REQUEST" correlationId="#[vars.TransactionID]">
+		<json-logger:logger doc:name="Log - Backup Status" doc:id="d4475cb8-572c-454c-8399-05262661165c" config-ref="JSON_Logger_Config" message='#["File backup to PCS Successful for correlation Id " ++ vars.transactionID]' tracePoint="AFTER_REQUEST" correlationId="#[vars.transactionID]">
 			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json ---
 {
     payload: JSONLoggerModule::stringifyNonJSON(vars.eventAuditMessage) 
@@ -136,7 +160,7 @@ else
 					<http:headers><![CDATA[#[output application/java
 ---
 {
-	"correlationID" : vars.TransactionID,
+	"correlationID" : vars.transactionID,
 	"X-Client-Secret" : "${https.orders.papi.clientSecret}",
     "Accept-Encoding" : "zip",
     "X-Client-ID" : "${https.orders.papi.clientId}"
@@ -149,7 +173,7 @@ else
 				</on-error-propagate>
 			</error-handler>
 		</try>
-				<json-logger:logger doc:name="Log - SAPI Call Status" doc:id="05c40f06-7fae-41e1-9d4a-e71bc988a1f5" config-ref="JSON_Logger_Config" message='#["File published successfully to SAPI for correlation ID"  ++ vars.TransactionID]' tracePoint="AFTER_REQUEST" correlationId="#[vars.TransactionID]">
+				<json-logger:logger doc:name="Log - SAPI Call Status" doc:id="05c40f06-7fae-41e1-9d4a-e71bc988a1f5" config-ref="JSON_Logger_Config" message='#["File published successfully to SAPI for correlation ID"  ++ vars.transactionID]' tracePoint="AFTER_REQUEST" correlationId="#[vars.transactionId]">
 			<json-logger:content><![CDATA[#[import modules::JSONLoggerModule output application/json ---
 {
     payload: JSONLoggerModule::stringifyNonJSON(vars.eventAuditMessage) 
@@ -167,7 +191,7 @@ output application/json
  errorMessage: "The provided external system: " ++ vars.fileDetails.externalSystem ++ " is invalid for fpl",
   errorType: 'DATA ERROR',
  
-correlationID :vars.TransactionID,
+correlationID :vars.transactionId,
 timestamp :now()
 }
 ]]></ee:set-payload>
@@ -185,13 +209,13 @@ output application/json
  errorMessage: "The provided external system: " ++ vars.fileDetails.externalSystem ++ " is invalid for fpl",
   errorType: 'DATA_ERROR',
  
-correlationID :vars.TransactionID,
+correlationID :vars.transactionId,
 timestamp :now()
 }
 ]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-				<json-logger:logger doc:name="Logger" doc:id="38afe0fd-42e4-4bba-8cf5-b8a8ed7df90a" config-ref="JSON_Logger_Config" message='#["Exception occurred processing the transaction for correlation Id " ++ vars.TransactionID]'>
+				<json-logger:logger doc:name="Logger" doc:id="38afe0fd-42e4-4bba-8cf5-b8a8ed7df90a" config-ref="JSON_Logger_Config" message='#["Exception occurred processing the transaction for correlation Id " ++ vars.transactionID]' correlationId="#[vars.transactionId]">
 					<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json ---
 {
     payload: JSONLoggerModule::stringifyNonJSON(vars.errorMessage) 
@@ -201,19 +225,21 @@ timestamp :now()
 		</choice>
 	</sub-flow>
 	<sub-flow name="sgst-sd-edi-eapi-impl-3pl-flow" doc:id="bfbb2929-131b-4e34-b7d8-ff32ec30ef0d" >
-		<set-variable value="#[uuid()]" doc:name="Set Transaction ID" doc:id="02ed61d7-2571-436f-adbf-ca6def2522d7" variableName="transactionID"/>
-		<json-logger:logger doc:name="log-Initial status" doc:id="72c68a27-ac53-4ddd-9726-b1ba29565168" config-ref="JSON_Logger_Config" message="API START:INIT : Received API request for third-party-logistics" correlationId="#[vars.transactionID]">
+		<json-logger:logger doc:name="log-Initial status" doc:id="72c68a27-ac53-4ddd-9726-b1ba29565168" config-ref="JSON_Logger_Config" message="API START: INIT - Received API request for third-party-logistics" correlationId="#[vars.transactionId]">
 			<json-logger:content ><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
-    "flowDirection": "INBOUND",
-    "source": "OneRoof",
-    "destination": "SAP",
-    "fileName": "NA",
-    "errorCode": "",
-    "errorMessage": "",
-    "subsidiary": "NA"
+   "flowDirection": Mule::p('api.oneRoof.flowDirection'),
+   "source": Mule::p('api.oneRoof.source'),
+   "target": vars.fileDetails.externalSystem default "",
+   "fileName": if(vars.fileDetails.flatFileName != null and vars.fileDetails.flatFileExtension != null)(vars.fileDetails.flatFileName as String ++ vars.fileDetails.flatFileExtension as String) else "" ,
+   "errorCode": "",
+   "errorMessage": "",
+   "subsidiary": vars.fileDetails.subsidiary default "",
+   "apiName": Mule::p('api.name'),
+   "action": Mule::p('api.action.api-start'),
+   "status": Mule::p('api.status.init')
 }]]]></json-logger:content>
 		</json-logger:logger>
 		
@@ -224,8 +250,12 @@ output application/xml
 ---
 {
 	"DoOwnershipChangeResponse": {
-		"CompanyCodeList": payload..DoOwnershipChangeResponse.CompanyCodeList,
-		"DoNumberList": payload..DoOwnershipChangeResponse.DoNumberList
+		(payload..DoOwnershipChangeResponse.*CompanyCodeList map {
+            "CompanyCodeList": $
+            }), 
+        (payload..DoOwnershipChangeResponse.*DoNumberList map {
+            "DoNumberList": $
+            })
 	}
 }]]></ee:set-payload>
 			</ee:message>
@@ -243,39 +273,44 @@ output application/xml
 		<flow-ref doc:name="Call to SAPI" doc:id="c9cddaf0-b7c5-41c2-b6f0-6e9c6f80caa9" name="sgst-sd-edi-eapi-impl-sap-sapi-flow"/>
 		<ee:transform doc:name="Frame - Response" doc:id="cc293bc7-e5c0-4936-98bf-d9e1e4a56c0a">
 			<ee:message>
-				<ee:set-payload resource="dwl/responsePayload.dwl" />
+				<ee:set-payload resource="dwl/3plResponsePayload.dwl" />
 			</ee:message>
 		</ee:transform>
-		<json-logger:logger doc:name="Log Success Response" doc:id="44067a63-17b7-423f-8fe8-8a3a9901b297" config-ref="JSON_Logger_Config" message="API END:COMPLETE : Received API request for third-party-logistics" tracePoint="AFTER_TRANSFORM">
+		<json-logger:logger doc:name="Log Success Response" doc:id="44067a63-17b7-423f-8fe8-8a3a9901b297" config-ref="JSON_Logger_Config" message="API END:COMPLETE : Received API request for third-party-logistics" tracePoint="AFTER_TRANSFORM" correlationId="#[vars.transactionId]">
 			<json-logger:content ><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
-    "flowDirection": "INBOUND",
-    "source": "OneRoof",
-    "destination": "SAP",
-    "fileName": "NA",
-    "errorCode": "",
-    "errorMessage": "",
-    "subsidiary": "NA"
+   "flowDirection": Mule::p('api.oneRoof.flowDirection'),
+   "source": Mule::p('api.oneRoof.source'),
+   "target": vars.fileDetails.externalSystem default "",
+   "fileName": if(vars.fileDetails.flatFileName != null and vars.fileDetails.flatFileExtension != null)(vars.fileDetails.flatFileName as String ++ vars.fileDetails.flatFileExtension as String) else "" ,
+   "errorCode": "",
+   "errorMessage": "",
+   "subsidiary": vars.fileDetails.subsidiary default "",
+   "apiName": Mule::p('api.name'),
+   "action": Mule::p('api.action.api-end'),
+   "status": Mule::p('api.status.complete')
 }]]]></json-logger:content>
 		</json-logger:logger>
 	</sub-flow>
 	
 	<sub-flow name="sgst-sd-edi-eapi-impl-current-stock-flow" doc:id="0da463a6-cf11-4c70-a1f3-3622da0d4391" >
-		<set-variable value="#[uuid()]" doc:name="Set Transaction ID" doc:id="e39c2ba7-4b92-4e86-ab38-6ca971c70156" variableName="transactionID"/>
-		<json-logger:logger doc:name="log-Initial status" doc:id="393a70c6-c7cb-4f86-8fc4-21dde1087f34" config-ref="JSON_Logger_Config" message="API START:INIT : Received API request for current-stock" correlationId="#[vars.transactionID]">
+		<json-logger:logger doc:name="log-Initial status" doc:id="393a70c6-c7cb-4f86-8fc4-21dde1087f34" config-ref="JSON_Logger_Config" message="API START: INIT - Received API request for current-stock" correlationId="#[vars.transactionId]">
 			<json-logger:content ><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
-    "flowDirection": "INBOUND",
-    "source": "OneRoof",
-    "destination": "SAP",
-    "fileName": "NA",
-    "errorCode": "",
-    "errorMessage": "",
-    "subsidiary": "NA"
+   "flowDirection": Mule::p('api.oneRoof.flowDirection'),
+   "source": Mule::p('api.oneRoof.source'),
+   "target": vars.fileDetails.externalSystem default "",
+   "fileName": if(vars.fileDetails.flatFileName != null and vars.fileDetails.flatFileExtension != null)(vars.fileDetails.flatFileName as String ++ vars.fileDetails.flatFileExtension as String) else "" ,
+   "errorCode": "",
+   "errorMessage": "",
+   "subsidiary": vars.fileDetails.subsidiary default "",
+   "apiName": Mule::p('api.name'),
+   "action": Mule::p('api.action.api-start'),
+   "status": Mule::p('api.status.init')
 }]]]></json-logger:content>
 		</json-logger:logger>
 		
@@ -307,6 +342,15 @@ output application/xml
 	basepath:  Mule::p('https.oneroof.sapi.basepath'),
 	path:  Mule::p('https.oneroof.sapi.currentStock.path')
 }]]></ee:set-variable>
+				<ee:set-variable variableName="fileDetails" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"externalSystem": "PBS",
+	"flatFileName": "CurrentStock" ++ "_" ++ now() as String {format: "YYYYMMDDHHmmSS"},
+	"fileExtension": ".txt",
+	"subsidiary": "NA"
+}]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="Call to SAPI" doc:id="06fcb2e8-709d-45c2-ab49-b15a45cdec57" name="sgst-sd-edi-eapi-impl-sap-sapi-flow"/>
@@ -315,34 +359,40 @@ output application/xml
 				<ee:set-payload resource="dwl/currentStockResponsePayload.dwl" />
 			</ee:message>
 		</ee:transform>
-		<json-logger:logger doc:name="Log Success Response" doc:id="6127996f-e351-40c8-893b-6216d9b6ca7f" config-ref="JSON_Logger_Config" message="API END:COMPLETE : Received API request for current-stock" tracePoint="AFTER_TRANSFORM">
+		<json-logger:logger doc:name="Log Success Response" doc:id="6127996f-e351-40c8-893b-6216d9b6ca7f" config-ref="JSON_Logger_Config" message="API END:COMPLETE : Received API request for current-stock" tracePoint="AFTER_TRANSFORM" correlationId="#[vars.transactionId]">
 			<json-logger:content ><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
-    "flowDirection": "INBOUND",
-    "source": "OneRoof",
-    "destination": "SAP",
-    "fileName": "NA",
-    "errorCode": "",
-    "errorMessage": "",
-    "subsidiary": "NA"
+   "flowDirection": Mule::p('api.oneRoof.flowDirection'),
+   "source": Mule::p('api.oneRoof.source'),
+   "target": vars.fileDetails.externalSystem default "",
+   "fileName": if(vars.fileDetails.flatFileName != null and vars.fileDetails.flatFileExtension != null)(vars.fileDetails.flatFileName as String ++ vars.fileDetails.flatFileExtension as String) else "" ,
+   "errorCode": "",
+   "errorMessage": "",
+   "subsidiary": vars.fileDetails.subsidiary default "",
+   "apiName": Mule::p('api.name'),
+   "action": Mule::p('api.action.api-end'),
+   "status": Mule::p('api.status.complete')
 }]]]></json-logger:content>
 		</json-logger:logger>
 	</sub-flow>
 	<sub-flow name="sgst-sd-edi-eapi-impl-sap-sapi-flow" doc:id="53fc38f0-abba-4a76-8cc9-f02d0b7bde8b" >
-		<json-logger:logger doc:name="Log - SAPI Call" doc:id="7c2a41b5-dc7b-4b47-b0c1-f0ce5ded6a00" config-ref="JSON_Logger_Config" message="CALL API:START - Initiated a call to SGST SD SAP SAPI">
+		<json-logger:logger doc:name="Log - SAPI Call" doc:id="7c2a41b5-dc7b-4b47-b0c1-f0ce5ded6a00" config-ref="JSON_Logger_Config" message="CALL API:START - Initiated a call to SGST SD SAP SAPI" correlationId="#[vars.transactionId]">
 			<json-logger:content ><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
-    "flowDirection": "INBOUND",
-    "source": "OneRoof",
-    "destination": "SAP",
-    "fileName": "NA",
-    "errorCode": "",
-    "errorMessage": "",
-    "subsidiary": "NA"
+   "flowDirection": Mule::p('api.oneRoof.flowDirection'),
+   "source": Mule::p('api.oneRoof.source'),
+   "target": vars.fileDetails.externalSystem default "",
+   "fileName": if(vars.fileDetails.flatFileName != null and vars.fileDetails.flatFileExtension != null)(vars.fileDetails.flatFileName as String ++ vars.fileDetails.flatFileExtension as String) else "" ,
+   "errorCode": "",
+   "errorMessage": "",
+   "subsidiary": vars.fileDetails.subsidiary default "",
+   "apiName": Mule::p('api.name'),
+   "action": Mule::p('api.action.call-api'),
+   "status": Mule::p('api.status.init')
 }]]]></json-logger:content>
 		</json-logger:logger>
 		
@@ -355,18 +405,21 @@ output application/json
     "X-Client-ID" : p('https.oneroof.sapi.client_secret')
 }]]]></http:headers>
 		</http:request>
-		<json-logger:logger doc:name="Log - SAPI Call Status" doc:id="3a90ae06-8408-46ab-b6d5-7de068c73815" config-ref="JSON_Logger_Config" message="CALL API:END - SUCCESS call to SGST SD SAP SAPI" tracePoint="AFTER_REQUEST" correlationId="#[vars.transactionID]">
+		<json-logger:logger doc:name="Log - SAPI Call Status" doc:id="3a90ae06-8408-46ab-b6d5-7de068c73815" config-ref="JSON_Logger_Config" message="CALL API:END - SUCCESS call to SGST SD SAP SAPI" tracePoint="AFTER_REQUEST" correlationId="#[vars.transactionId]">
 			<json-logger:content ><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
-    "flowDirection": "INBOUND",
-    "source": "OneRoof",
-    "destination": "SAP",
-    "fileName": "NA",
-    "errorCode": "",
-    "errorMessage": "",
-    "subsidiary": "NA"
+   "flowDirection": Mule::p('api.oneRoof.flowDirection'),
+   "source": Mule::p('api.oneRoof.source'),
+   "target": vars.fileDetails.externalSystem default "",
+   "fileName": if(vars.fileDetails.flatFileName != null and vars.fileDetails.flatFileExtension != null)(vars.fileDetails.flatFileName as String ++ vars.fileDetails.flatFileExtension as String) else "" ,
+   "errorCode": "",
+   "errorMessage": "",
+   "subsidiary": vars.fileDetails.subsidiary default "",
+   "apiName": Mule::p('api.name'),
+   "action": Mule::p('api.action.call-api'),
+   "status": Mule::p('api.status.success')
 }]]]></json-logger:content>
 		</json-logger:logger>
 	</sub-flow>

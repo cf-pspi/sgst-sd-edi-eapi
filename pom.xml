@@ -8,10 +8,10 @@
 	</parent>
 	<groupId>69195e0c-f771-4438-a4b2-58237c4947b6</groupId>
 	<artifactId>sgst-sd-edi-eapi</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<packaging>mule-application</packaging>
 
-	<name>sgst-sd-edi-eapi</name>
+	<name>sgst-sd-edi-eapi-sit</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -161,6 +161,18 @@
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-xml-module</artifactId>
 			<version>1.3.3</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-wsc-connector</artifactId>
+			<version>1.6.14</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.modules</groupId>
+			<artifactId>mule-wss-module</artifactId>
+			<version>1.1.1</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 	</dependencies>

@@ -54,7 +54,7 @@
   </wsdl:binding>
   <wsdl:service name="Pana_APAC_OneRoof.WebServices.OneRoofRequest">
     <wsdl:port name="Pana_APAC_OneRoof_WebServices_OneRoofRequest_Port" binding="tns:Pana_APAC_OneRoof_WebServices_OneRoofRequest_Binder">
-      <soap:address location="https://localhost:8081/api/v1/currentStock"/>
+      <soap:address location="https://sgst-sd-edi-eapi-5ircui.internal-cci3mz.sgp-s1.cloudhub.io:8081/api/v1/currentStock/OneRoofRequest"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

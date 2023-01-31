@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:apikit-soap="http://www.mulesoft.org/schema/mule/apikit-soap"
+<mule xmlns:wss="http://www.mulesoft.org/schema/mule/wss"
+	xmlns:apikit-soap="http://www.mulesoft.org/schema/mule/apikit-soap"
 	xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
-	xmlns:sockets="http://www.mulesoft.org/schema/mule/sockets"
-	xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq"
-	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+	xmlns:sockets="http://www.mulesoft.org/schema/mule/sockets" xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd 
 http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
@@ -15,7 +15,8 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
 http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
-http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/mule/apikit-soap/current/mule-apikit-soap.xsd">
+http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/mule/apikit-soap/current/mule-apikit-soap.xsd
+http://www.mulesoft.org/schema/mule/wss http://www.mulesoft.org/schema/mule/wss/current/mule-wss.xsd">
 	<!-- <configuration-properties doc:name="Configuration properties" doc:id="5cda403a-e192-4f4f-bf8b-351f4b21ef66" file="properties\local.yaml" /> -->
 	<!-- <api-gateway:autodiscovery apiId="${api.autodiscovery.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="83ded0e2-f303-492c-93d2-bc99082ace31" flowRef="sgst-pp-rationalization-edi-eapi-main" /> -->
 	
@@ -80,9 +81,10 @@ http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/m
 	
 	
 	<global-property doc:name="Global Property" doc:id="8662076a-faee-41c5-8eac-9ed093e2bb43" name="secret.key" value="PanasonicDev2022" />
+	
 	<error-handler name="common-soap-exception-handler" doc:id="23a76056-bf9e-4bef-8f8a-21317537ce91" >
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="aa46a0d7-c98c-4b3b-a274-27b72268e942" type="ANY" when="attributes.maskedRequestPath contains('DoOwnershipChangeResponse')">
-			<json-logger:logger doc:name="Logger" doc:id="721b5347-5c42-4d5b-8e98-112672c50c69" config-ref="JSON_Logger_Config" message="API FAILURE: Error occured for thirdPartyLogistics" tracePoint="EXCEPTION">
+			<json-logger:logger doc:name="Logger" doc:id="721b5347-5c42-4d5b-8e98-112672c50c69" config-ref="JSON_Logger_Config" message="API FAILURE: Error occured for thirdPartyLogistics" tracePoint="EXCEPTION" correlationId="#[vars.transactionId]">
 				<json-logger:content ><![CDATA[#[%dw 2.0
 output application/json
 ---
@@ -132,7 +134,7 @@ soapenv#Envelope: {
 			</async>
 		</on-error-propagate>
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="b448423a-e2c0-45f8-abb9-43aa79fbac4e" type="ANY" when="attributes.maskedRequestPath contains('OneRoofRequest')">
-			<json-logger:logger doc:name="Logger" doc:id="02908f97-d85f-4f57-9230-65269fb8a881" config-ref="JSON_Logger_Config" message="API FAILURE: Error occured for CurrentStock" tracePoint="EXCEPTION">
+			<json-logger:logger doc:name="Logger" doc:id="02908f97-d85f-4f57-9230-65269fb8a881" config-ref="JSON_Logger_Config" message="API FAILURE: Error occured for CurrentStock" tracePoint="EXCEPTION" correlationId="#[vars.transactionId]">
 				<json-logger:content ><![CDATA[#[%dw 2.0
 output application/json
 ---
@@ -252,14 +254,14 @@ output application/json
  errorMessage: error.description default "The server is unable to process the request",
   errorType: Mule::p('errors.'++ error.errorType.identifier as String ++ '.errorType') default 'RUNTIME_ERROR',
  
-correlationID :vars.transactionID,
+correlationID :vars.transactionId,
 timestamp :now()
 }
 ]]></ee:set-variable>
 			</ee:variables>
 			
 </ee:transform>
-		<json-logger:logger doc:name="Logger" doc:id="12dc725b-80a8-42f8-8001-be80528e52e7" config-ref="JSON_Logger_Config" message='#["Exception occurred processing the transaction for correlation Id " ++ vars.TransactionID]' tracePoint="EXCEPTION" priority="ERROR">
+		<json-logger:logger doc:name="Logger" doc:id="12dc725b-80a8-42f8-8001-be80528e52e7" config-ref="JSON_Logger_Config" message='#["Exception occurred processing the transaction for correlation Id " ++ vars.transactionID]' tracePoint="EXCEPTION" priority="ERROR" correlationId="#[vars.transactionId]">
 			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json ---
 {
     payload: JSONLoggerModule::stringifyNonJSON(vars.errorDetails) 
@@ -276,7 +278,7 @@ var seperator = "/"
 ---
 {
     "apiName": app.name default "",
-    "correlationID": vars.transactionID default "",
+    "correlationID": vars.transactionId default "",
     "toAddress": Mule::p('notification.email.toaddress') default [],
     "fileName": vars.fileDetails.flatFileName default "NA",
     "filePath": ("/" ++ Mule::p('api.flowDirection')  ++ "/" ++ lower(vars.fileDetails.subsidiary) ++ "/" ++ lower(vars.fileDetails.externalSystem) ++ vars.sapiHttpPath  ++ "/" ++ lower(vars.fileDetails.flatFileName) ++ "." ++ vars.fileDetails.flatFileExtension) as String default "NA",

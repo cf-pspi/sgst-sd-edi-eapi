@@ -8,6 +8,22 @@ api:
     id: ''
   flowDirection: 'outbound'
   source: 'SAP'
+  action:
+      api-start: 'API START'
+      api-end: 'API END'
+      process: 'PROCESS'
+      call-api: 'CALL API'
+      call-extsys: 'CALL EXT-SYS'
+  status:
+      init: 'INIT'
+      success: 'SUCCESS'
+      failure: 'FAILURE'
+      complete: 'COMPLETE' 
+  oneRoof:         
+    flowDirection: 'inbound'
+    source: 'OneRoof'
+  name: 'sgst-sd-edi-eapi'
+
  
 # HTTP config
 https:
@@ -58,7 +74,7 @@ routing:
 #Notification Configuration
 notification:
   email:
-    toaddress: ['sabeena.shaik@sg.panasonic.com','pavan.ramadugula@sg.panasonic.com','umamaheswara.karanam@sg.panasonic.com']
+    toaddress: ['ankita.rai@sg.panasonic.com', 'umamaheswara.karanam@sg.panasonic.com']
 
 json:
   logger:
