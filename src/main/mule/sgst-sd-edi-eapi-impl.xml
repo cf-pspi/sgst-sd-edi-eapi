@@ -246,17 +246,11 @@ output application/json
 		<ee:transform doc:name="Set payload to send to SAPI" doc:id="a7342f97-30cc-469d-b2be-5d289193d710" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
-output application/xml
+output application/json
 ---
 {
-	"DoOwnershipChangeResponse": {
-		(payload..DoOwnershipChangeResponse.*CompanyCodeList map {
-            "CompanyCodeList": $
-            }), 
-        (payload..DoOwnershipChangeResponse.*DoNumberList map {
-            "DoNumberList": $
-            })
-	}
+    "CompanyCodeList": payload..DoOwnershipChangeResponse.*CompanyCodeList, 
+    "DoNumberList": payload..DoOwnershipChangeResponse.*DoNumberList
 }]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
@@ -317,20 +311,18 @@ output application/json
 		<ee:transform doc:name="Set payload to send to SAPI" doc:id="25220629-6417-4c42-bf5e-c4b3a3baaaf8" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
-output application/xml
+output application/json
 ---
 {
-	"OneRoofRequest": {
-		"DTS": payload..OneRoofRequest.DTS,
-		"TypeOfData": payload..OneRoofRequest.TypeOfData,
-		"ReportRequestID": payload..OneRoofRequest.ReportRequestID,
-		"NSCcode": payload..OneRoofRequest.NSCcode,
-		"NSCStorLocCode": payload..OneRoofRequest.NSCStorLocCode,
-		"NSCMaterialNumber": payload..OneRoofRequest.NSCMaterialNumber,
-		"MfgCode": payload..OneRoofRequest.DTS,
-		"MfgStorLocCode": payload..OneRoofRequest.MfgStorLocCode,
-		"MfgMaterialNumber": payload..OneRoofRequest.MfgMaterialNumber
-	}
+	"DTS": payload..OneRoofRequest.DTS,
+	"TypeOfData": payload..OneRoofRequest.TypeOfData,
+	"ReportRequestID": payload..OneRoofRequest.ReportRequestID,
+	"NSCcode": payload..OneRoofRequest.*NSCcode,
+	"NSCStorLocCode": payload..OneRoofRequest.*NSCStorLocCode,
+	"NSCMaterialNumber": payload..OneRoofRequest.*NSCMaterialNumber,
+	"MfgCode": payload..OneRoofRequest.DTS,
+	"MfgStorLocCode": payload..OneRoofRequest.*MfgStorLocCode,
+	"MfgMaterialNumber": payload..OneRoofRequest.*MfgMaterialNumber
 }]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
