@@ -27,7 +27,7 @@ uuid()]]></ee:set-variable>
 		<apikit:router config-ref="sgst-sd-edi-eapi-config" />
         <error-handler ref="common-exception-handler" />
     </flow>
-    <apikit-soap:config name="soapkit-config" port="Pana_APAC_OneRoof_WebServices_DoOwnershipChangeResponse_Port" service="Pana_APAC_OneRoof.WebServices.DoOwnershipChangeResponse" wsdlLocation="DoOwnershipChangeResponse.wsdl" soapVersion="SOAP12"/>
+    <apikit-soap:config name="soapkit-config" port="${3pl.port}" service="${3pl.service}" wsdlLocation="${3pl.wsdl}" soapVersion="SOAP12"/>
     <flow name="sgst-sd-edi-main-3pl">
         <http:listener path="${https.3pl.path}" config-ref="sgst-sd-edi-eapi-httpListenerConfig">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -66,7 +66,7 @@ output application/json
         </apikit-soap:router>
 		<error-handler ref="common-soap-exception-handler" />
     </flow>
-    <apikit-soap:config name="soapkit-config-currentStock" port="Pana_APAC_OneRoof_WebServices_OneRoofRequest_Port" service="Pana_APAC_OneRoof.WebServices.OneRoofRequest" wsdlLocation="OneRoofRequest.wsdl" soapVersion="SOAP12"/>
+    <apikit-soap:config name="soapkit-config-currentStock" port="${currentStock.port}" service="${currentStock.service}" wsdlLocation="${currentStock.wsdl}" soapVersion="SOAP12"/>
 	<flow name="sgst-sd-edi-main-current-stock" doc:id="e263440c-e9bd-4ae9-ad2c-1711c78b683d">
         <http:listener config-ref="sgst-sd-edi-eapi-httpListenerConfig" path="${https.current-stock.path}">
             <http:response statusCode="#[attributes.additionalTransportData.statusCode default 200]">

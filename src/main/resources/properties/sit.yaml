@@ -6,6 +6,10 @@ mule:
 api:
   autodiscovery:
     id: ''
+    currentStock:
+      id: '18462118'
+    3pl:
+      id: '18462639'
   flowDirection: 'outbound'
   source: 'SAP'
   action:
@@ -97,5 +101,15 @@ http:
     currentStock:    
       sapi:
           path: '/current-stock'
-    
+          
+#WSDL Config:
+3pl:
+  wsdl: 'DoOwnershipChangeResponseSIT.wsdl'
+  service: 'Pana_APAC_OneRoof.WebServices.DoOwnershipChangeResponse'
+  port: 'Pana_APAC_OneRoof_WebServices_DoOwnershipChangeResponse_Port'
+  
+currentStock:
+  wsdl: 'OneRoofRequestSIT.wsdl'
+  service: 'Pana_APAC_OneRoof.WebServices.OneRoofRequest'
+  port: 'Pana_APAC_OneRoof_WebServices_OneRoofRequest_Port'
     

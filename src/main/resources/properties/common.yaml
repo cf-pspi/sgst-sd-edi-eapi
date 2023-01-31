@@ -4,9 +4,9 @@ https:
   port: '8081'
   host: '0.0.0.0'
   3pl:
-    path: '/api/v1/thirdPartyLogistics/*'
+    path: '/api/v1/thirdPartyLogistics/DoOwnershipChangeResponse/'
   current-stock:
-    path: '/api/v1/currentStock/*'
+    path: '/api/v1/currentStock/OneRoofRequest/'
   path: '/api/v1/*'
   ReadTimeout: '300000'
   papi:   

@@ -82,6 +82,8 @@ http://www.mulesoft.org/schema/mule/wss http://www.mulesoft.org/schema/mule/wss/
 	
 	<global-property doc:name="Global Property" doc:id="8662076a-faee-41c5-8eac-9ed093e2bb43" name="secret.key" value="PanasonicDev2022" />
 	
+	<api-gateway:autodiscovery apiId="${api.autodiscovery.currentStock.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="12d5c9f5-a9c3-4e7a-9363-7d1d986c9570" flowRef="sgst-sd-edi-main-current-stock" />
+	<api-gateway:autodiscovery apiId="${api.autodiscovery.3pl.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="103bd051-7f1f-42a4-8af7-be422b866103" flowRef="sgst-sd-edi-main-3pl" />
 	<error-handler name="common-soap-exception-handler" doc:id="23a76056-bf9e-4bef-8f8a-21317537ce91" >
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="aa46a0d7-c98c-4b3b-a274-27b72268e942" type="ANY" when="attributes.maskedRequestPath contains('DoOwnershipChangeResponse')">
 			<json-logger:logger doc:name="Logger" doc:id="721b5347-5c42-4d5b-8e98-112672c50c69" config-ref="JSON_Logger_Config" message="API FAILURE: Error occured for thirdPartyLogistics" tracePoint="EXCEPTION" correlationId="#[vars.transactionId]">
