@@ -30,8 +30,8 @@ http://www.mulesoft.org/schema/mule/wss http://www.mulesoft.org/schema/mule/wss/
     </http:listener-config>
     <apikit:config name="sgst-sd-edi-eapi-config" api="sgst-sd-edi-eapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
 	 <!-- <api-gateway:autodiscovery apiId="${api.autodiscovery.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="aa2fadab-bd65-4cdc-8d89-daf4bd910287" flowRef="sgst-mm-edi-eapi-main" /> --> 
-	<http:request-config name="HTTP_Request_For_PAPI" doc:name="HTTP Request configuration" doc:id="fc30f76d-f9fe-42e2-b267-c9cc43627746" basePath="${https.orders.papi.basepath}">
-		<http:request-connection maxConnections="${https.papi.max.connections}" connectionIdleTimeout="${https.papi.connections.idle.timeout}" responseBufferSize="${https.papi.response.buffer.size}" host="${https.orders.papi.host}" port="${https.orders.papi.port}" protocol="HTTPS">
+	<http:request-config name="HTTP_Request_For_PAPI" doc:name="HTTP Request configuration" doc:id="fc30f76d-f9fe-42e2-b267-c9cc43627746" basePath="${https.orders.papi.basepath}" responseTimeout="${https.papi.response.timeout}">
+		<http:request-connection maxConnections="${https.papi.max.connections}" connectionIdleTimeout="${https.papi.connections.idle.timeout}" responseBufferSize="${https.papi.response.buffer.size}" host="${https.orders.papi.host}" protocol="HTTPS" usePersistentConnections="false">
 			<reconnection >
 				<reconnect frequency="${https.papi.reconnection.frequency}" count="${https.papi.reconnection.count}"/>
 			</reconnection>
@@ -56,8 +56,8 @@ http://www.mulesoft.org/schema/mule/wss http://www.mulesoft.org/schema/mule/wss/
 	<tls:context name="TLS_Context" doc:name="TLS Context" doc:id="03206e63-c7e3-4328-badc-5e0921c80440" >
 		<tls:key-store type="jks" path="mykeystore.jks" alias="servercert" keyPassword="winter@123" password="winter@123" />
 	</tls:context>
-	<http:request-config name="HTTP_Request_For_BackUPFile" doc:name="HTTP Request configuration" doc:id="e9d0180f-fb3a-4f19-b9e6-e8a84621c416" basePath="${https.utilities.papi.basepath}">
-		<http:request-connection host="${https.utilities.papi.host}" maxConnections="${https.pcs.max.connections}" connectionIdleTimeout="${https.pcs.connections.idle.timeout}" responseBufferSize="${https.pcs.response.buffer.size}" port="${https.utilities.papi.port}" protocol="HTTPS">
+	<http:request-config name="HTTP_Request_For_BackUPFile" doc:name="HTTP Request configuration" doc:id="e9d0180f-fb3a-4f19-b9e6-e8a84621c416" basePath="${https.utilities.papi.basepath}" responseTimeout="${https.pcs.response.timeout}">
+		<http:request-connection host="${https.utilities.papi.host}" maxConnections="${https.pcs.max.connections}" connectionIdleTimeout="${https.pcs.connections.idle.timeout}" responseBufferSize="${https.pcs.response.buffer.size}" protocol="HTTPS" usePersistentConnections="false">
 			<reconnection >
 				<reconnect frequency="${https.pcs.reconnection.frequency}" count="${https.pcs.reconnection.count}" />
 			</reconnection>
@@ -264,10 +264,6 @@ timestamp :now()
 			
 </ee:transform>
 		<json-logger:logger doc:name="Logger" doc:id="12dc725b-80a8-42f8-8001-be80528e52e7" config-ref="JSON_Logger_Config" message='#["Exception occurred processing the transaction for correlation Id " ++ vars.transactionID]' tracePoint="EXCEPTION" priority="ERROR" correlationId="#[vars.transactionId]">
-			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json ---
-{
-    payload: JSONLoggerModule::stringifyNonJSON(vars.errorDetails) 
-}]]]></json-logger:content>
 		</json-logger:logger>
 	
 </sub-flow>

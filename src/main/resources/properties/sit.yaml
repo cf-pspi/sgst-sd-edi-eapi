@@ -40,16 +40,16 @@ https:
     papi:
       clientId: '63e58a1260dc4565b884f5096f5a359c'
       clientSecret: '![Xwq/AIeqnSBLcW5chk+wagByeIhKyy5sim1Zex5wwqidVWdFxlYmlvcEQYXr0Sgt]'
-      host: 'sgst-orders-edi-papi-5ircui.internal-cci3mz.sgp-s1.cloudhub.io'
+      host: 'sgst-orders-edi-papi-sit-5ircui.internal-cci3mz.sgp-s1.cloudhub.io'
       port: '8081'         
       basepath: '/api/v1'
       fplPath: '/fpl'   
 
   utilities:    
     papi:
-      clientId: 'cb6fea3d3d814a43a7042b301698194d'
-      clientSecret: '671B051dA51146B8A6eA36490C1B2F05'
-      host: 'sgst-audit-papi-5ircui.internal-cci3mz.sgp-s1.cloudhub.io'
+      clientId: 'd8052cfede134e6ca8f4b5469b30aa9b'
+      clientSecret: '![P5aiD6tjM/YpenUBcLR2Ej+Srl+8G2YJXeTgOsLeJHQ5cFNKXZTKTAjQck7EY1rh]'
+      host: 'sgst-audit-papi-sit-5ircui.internal-cci3mz.sgp-s1.cloudhub.io'
       port: '8081'   
       basepath: '/api/v1'
       path:

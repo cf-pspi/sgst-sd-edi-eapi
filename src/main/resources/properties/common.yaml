@@ -17,7 +17,7 @@ https:
               timeout: '60000'
           timeout: '60000'
       response:    
-          timeout: '30000'
+          timeout: '300000'
           buffer:    
               size: '1024'
       reconnection:
@@ -45,7 +45,7 @@ https:
               timeout: '60000'
           timeout: '60000'
       response:    
-          timeout: '30000'
+          timeout: '60000'
           buffer:    
               size: '1024'
       reconnection:
