@@ -139,16 +139,9 @@ input payload multipart/form-data
 			<ee:variables >
 				<ee:set-variable variableName="validateExternalSystem" ><![CDATA[output application/json
 ---
-
-if( Mule::p('routing.systems.mm.po') contains vars.fileDetails.externalSystem) "purchase-orders"	
+if( Mule::p('routing.systems.sd') contains vars.fileDetails.externalSystem) "fpl"
 else 
-	if( Mule::p('routing.systems.mm.pr') contains vars.fileDetails.externalSystem) "purchase-results"
-else
-	if( Mule::p('routing.systems.cms') contains vars.fileDetails.externalSystem) "ar-statements"
-else
-	if( Mule::p('routing.systems.fi') contains vars.fileDetails.externalSystem) "fpl"
-else
-	"InvalidExternalSystem"]]></ee:set-variable>
+"InvalidExternalSystem"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<choice doc:name="Choice" doc:id="bb898d23-84a6-4578-bac9-bc51bbb27075" >
