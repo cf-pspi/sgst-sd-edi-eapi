@@ -161,7 +161,7 @@ else
 ---
 {
 	"correlationID" : vars.transactionID,
-	"X-Client-Secret" : "${https.orders.papi.clientSecret}",
+	"X-Client-Secret" : "${secure::https.orders.papi.clientSecret}",
     "Accept-Encoding" : "zip",
     "X-Client-ID" : "${https.orders.papi.clientId}"
 }]]]></http:headers>

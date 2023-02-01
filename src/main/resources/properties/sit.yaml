@@ -5,7 +5,7 @@ mule:
 #API Manager config
 api:
   autodiscovery:
-    id: ''
+    id: '18461622'
     currentStock:
       id: '18462118'
     3pl:
@@ -38,8 +38,8 @@ https:
 
   orders:    
     papi:
-      clientId: 'cb6fea3d3d814a43a7042b301698194d'
-      clientSecret: '671B051dA51146B8A6eA36490C1B2F05'
+      clientId: '63e58a1260dc4565b884f5096f5a359c'
+      clientSecret: '![Xwq/AIeqnSBLcW5chk+wagByeIhKyy5sim1Zex5wwqidVWdFxlYmlvcEQYXr0Sgt]'
       host: 'sgst-orders-edi-papi-5ircui.internal-cci3mz.sgp-s1.cloudhub.io'
       port: '8081'         
       basepath: '/api/v1'
