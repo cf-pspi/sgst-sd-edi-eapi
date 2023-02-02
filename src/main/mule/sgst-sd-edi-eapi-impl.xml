@@ -56,6 +56,21 @@ output application/json
 }]]]></json-logger:content>
 
 		</json-logger:logger>
+		<ee:transform doc:name="Set Request" doc:id="c1c5e010-a941-4015-8c0c-c5777ed70843">
+				<ee:message>
+				</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="pcsBackup"><![CDATA[%dw 2.0
+output multipart/form-data
+input payload multipart/form-data
+---
+{
+  "parts": {
+  	"File": vars.initialPayload.parts.'File'
+  	}
+}]]></ee:set-variable>
+			</ee:variables>
+			</ee:transform>
 		<async doc:name="Async Call" doc:id="2dff04a0-c092-4dd7-903f-308979806df7" >
 			<flow-ref doc:name="Backup file in PCS" doc:id="916db69b-a895-41ec-b6d3-8b50a910fe05" name="sgst-sd-edi-impl-api-impl-backUp-flow" />
 		</async>
@@ -88,21 +103,6 @@ output application/json
 		</choice>
 	</sub-flow>
 	<sub-flow name="sgst-sd-edi-impl-api-impl-backUp-flow" doc:id="58cb3365-7738-4aec-91e6-391c2c512f1a" >
-		<ee:transform doc:name="Set Request" doc:id="c1c5e010-a941-4015-8c0c-c5777ed70843">
-				<ee:message>
-				<ee:set-payload ><![CDATA[%dw 2.0
-output multipart/form-data
-input payload multipart/form-data
----
-{
-  "parts": {
-  	"File": vars.initialPayload.parts.'File'
-  	}
-}]]></ee:set-payload>
-				</ee:message>
-			<ee:variables >
-			</ee:variables>
-			</ee:transform>
 		<json-logger:logger doc:name="Log Backup Status" doc:id="0cdaae27-5a71-4f08-b2c8-9c70ed974e77" config-ref="JSON_Logger_Config" message="Initiated a call to PCS Process API." tracePoint="BEFORE_REQUEST" correlationId="#[vars.transactionId]">
 			<json-logger:content ><![CDATA[#[%dw 2.0
 output application/json
@@ -120,10 +120,11 @@ output application/json
    "status": Mule::p('api.status.initiate')
 }]]]></json-logger:content>
 		</json-logger:logger>
-		<http:request method="POST" doc:name="Call PCS Backup" doc:id="3ae19d80-071e-4755-a80c-0529366c9f06" config-ref="HTTP_Request_For_BackUPFile" path="${https.utilities.papi.path.backup}" outputMimeType="multipart/form-data">
-					<http:headers><![CDATA[#[{
+		<http:request method="POST" doc:name="Call PCS Backup" doc:id="3ae19d80-071e-4755-a80c-0529366c9f06" config-ref="HTTP_Request_For_BackUPFile" path="${https.utilities.papi.path.backup}" outputMimeType="multipart/form-data" sendCorrelationId="ALWAYS">
+					<http:body ><![CDATA[#[vars.pcsBackup]]]></http:body>
+			<http:headers><![CDATA[#[{
 "direction": Mule::p('api.flowDirection'),
-"correlationID" :vars.transactionID,
+"correlationID" :vars.transactionId,
 "externalSystem" : vars.fileDetails.externalSystem,
 "fileType" : vars.sapiHttpPath replace "/" with "" ,
 "fileName" :vars.fileDetails.flatFileName,
@@ -293,8 +294,42 @@ output application/json
 	basepath:  Mule::p('https.oneroof.sapi.basepath'),
 	path:  Mule::p('https.oneroof.sapi.3pl.path')	
 }]]></ee:set-variable>
+				<ee:set-variable variableName="fileDetails" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"externalSystem": "PBS",
+	"flatFileName": "3PL" ++ "_" ++ now() as String {format: "YYYYMMDDHHmmSS"},
+	"fileExtension": ".txt",
+	"subsidiary": "PAPVN-TL1"
+}]]></ee:set-variable>
+				<ee:set-variable variableName="sapiHttpPath" ><![CDATA[%dw 2.0
+output application/java
+---
+Mule::p('https.oneroof.sapi.3pl.path')]]></ee:set-variable>
+				<ee:set-variable variableName="pcsBackup" ><![CDATA[%dw 2.0
+output multipart/form-data
+input payload application/json
+---
+{
+    parts : {
+        File : {
+            headers : {
+                "Content-Disposition" : {
+                    "name": "File",
+                    "filename": "3PL" ++ "_" ++ now() as String {format: "YYYYMMDDHHmmSS"}
+                    },
+                "Content-Type" : "application/json"
+                },
+            content : payload
+            }
+        }
+}]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<async doc:name="Async" doc:id="f54459c4-931d-4b43-8b4d-944b225c8225" >
+			<flow-ref doc:name="Backup File to PCS" doc:id="d5980cd2-8844-4b78-b230-ab125b4fffe3" name="sgst-sd-edi-impl-api-impl-backUp-flow" />
+		</async>
 		<flow-ref doc:name="Call to SAPI" doc:id="c9cddaf0-b7c5-41c2-b6f0-6e9c6f80caa9" name="sgst-sd-edi-eapi-impl-sap-sapi-flow"/>
 		<ee:transform doc:name="Frame - Response" doc:id="cc293bc7-e5c0-4936-98bf-d9e1e4a56c0a">
 			<ee:message>
@@ -339,7 +374,7 @@ output application/json
 }]]]></json-logger:content>
 		</json-logger:logger>
 		
-		<ee:transform doc:name="Set payload to send to SAPI" doc:id="25220629-6417-4c42-bf5e-c4b3a3baaaf8" >
+		<ee:transform doc:name="Set payload to send to SAPI" doc:id="ed806eac-9c9e-4152-8ced-d5c9c08234bd" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -372,17 +407,42 @@ output application/json
 	"externalSystem": "PBS",
 	"flatFileName": "CurrentStock" ++ "_" ++ now() as String {format: "YYYYMMDDHHmmSS"},
 	"fileExtension": ".txt",
-	"subsidiary": "NA"
+	"subsidiary": "PAPVN-TL1"
+}]]></ee:set-variable>
+				<ee:set-variable variableName="sapiHttpPath" ><![CDATA[%dw 2.0
+output application/java
+---
+Mule::p('https.oneroof.sapi.currentStock.path')]]></ee:set-variable>
+				<ee:set-variable variableName="pcsBackup" ><![CDATA[%dw 2.0
+output multipart/form-data
+input payload application/json
+---
+{
+    parts : {
+        File : {
+            headers : {
+                "Content-Disposition" : {
+                    "name": "File",
+                    "filename": "CurrentStock" ++ "_" ++ now() as String {format: "YYYYMMDDHHmmSS"}
+                    },
+                "Content-Type" : "application/json"
+                },
+            content : payload
+            }
+        }
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<flow-ref doc:name="Call to SAPI" doc:id="06fcb2e8-709d-45c2-ab49-b15a45cdec57" name="sgst-sd-edi-eapi-impl-sap-sapi-flow"/>
-		<ee:transform doc:name="Frame - Response" doc:id="1c30e43b-4dad-46dd-b1b8-716a48f5d806">
+		<async doc:name="Async" doc:id="c3468b8e-262c-4802-8031-bd0e8149c775" >
+			<flow-ref doc:name="Backup File to PCS" doc:id="bdaa08fe-9847-47da-be62-cf0c80fdf0d7" name="sgst-sd-edi-impl-api-impl-backUp-flow"/>
+		</async>
+		<flow-ref doc:name="Call to SAPI" doc:id="358c9c42-1100-4d30-9e45-f3cd90d0a090" name="sgst-sd-edi-eapi-impl-sap-sapi-flow"/>
+		<ee:transform doc:name="Frame - Response" doc:id="adcef46f-2cb5-48aa-a564-f2d5d0d98b74">
 			<ee:message>
 				<ee:set-payload resource="dwl/currentStockResponsePayload.dwl" />
 			</ee:message>
 		</ee:transform>
-		<json-logger:logger doc:name="Log Success Response" doc:id="6127996f-e351-40c8-893b-6216d9b6ca7f" config-ref="JSON_Logger_Config" message="API END:COMPLETE : Received API request for current-stock" tracePoint="AFTER_TRANSFORM" correlationId="#[vars.transactionId]">
+		<json-logger:logger doc:name="Log Success Response" doc:id="ffeb070d-ed76-4aa0-b552-962cd0e37a89" config-ref="JSON_Logger_Config" message="API END:COMPLETE : Received API request for current-stock" tracePoint="AFTER_TRANSFORM" correlationId="#[vars.transactionId]">
 			<json-logger:content ><![CDATA[#[%dw 2.0
 output application/json
 ---
@@ -423,7 +483,7 @@ output application/json
 			<http:headers><![CDATA[#[output application/java
 ---
 {
-	"correlationID" : vars.transactionID,
+	"correlationID" : vars.transactionId,
 	"X-Client-Secret" :  p('https.oneroof.sapi.client_id'),
     "X-Client-ID" : p('https.oneroof.sapi.client_secret')
 }]]]></http:headers>
