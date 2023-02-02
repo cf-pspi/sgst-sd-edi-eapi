@@ -112,4 +112,15 @@ currentStock:
   wsdl: 'OneRoofRequestSIT.wsdl'
   service: 'Pana_APAC_OneRoof.WebServices.OneRoofRequest'
   port: 'Pana_APAC_OneRoof_WebServices_OneRoofRequest_Port'
+
+#Notification Configuration
+amq:
+  email:
+    toaddress: ['pavan.ramadugula@sg.panasonic.com']
+    publish: 
+      url: 'https://mq-us-east-1.anypoint.mulesoft.com/api/v1'
+      path: 'mq-common-audit'
+      client:
+        id: '3b109a1dd2a84b238e8eaa858e572009'
+        secret: '![k6bkbjJ/coygt7VSiIWPeFo7buJMr2C4OffSGDFEYVDW762e1iobnck4p9H5ZM4E]'
     

@@ -81,6 +81,20 @@ errors:
   STREAM_MAXIMUM_SIZE_EXCEEDED:
     errorCode: '500'
     errorType: 'STREAM_MAXIMUM_SIZE_EXCEEDED'
+
+# Json loggers
+api:
+  action:    
+     api-start: 'API START'
+     api-end: 'API END'
+     process: 'PROCESS'
+     call-api: 'CALL API'
+     call-extsys: 'CALL EXT-SYS'
+  status: 
+    initiate: 'INIT'
+    success: 'SUCCESS'
+    failure: 'FAILURE'
+    complete: 'COMPLETE'
  
 
 

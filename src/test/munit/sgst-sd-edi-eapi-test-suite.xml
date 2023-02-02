@@ -15,6 +15,11 @@
 				<munit-tools:with-attribute whereValue="cca62187-6017-4269-9b88-5f447c9e649f" attributeName="doc:id" />
 			</munit-tools:with-attributes>
 		</munit-tools:mock-when>
+		<munit-tools:mock-when doc:name="Mock Publish" doc:id="a357eb1b-f7e5-4d97-8915-0033b317725f" processor="anypoint-mq:publish">
+			<munit-tools:with-attributes >
+				<munit-tools:with-attribute whereValue="Publish" attributeName="doc:name" />
+			</munit-tools:with-attributes>
+		</munit-tools:mock-when>
 	</munit:before-suite>
 	<munit:test name="post:\fpl:multipart\form-data:success-scenario" doc:id="9f8fe156-9d5f-4b61-b7f3-84d10ef32c84">
 		<munit:behavior >

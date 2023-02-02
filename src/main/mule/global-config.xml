@@ -84,6 +84,9 @@ http://www.mulesoft.org/schema/mule/wss http://www.mulesoft.org/schema/mule/wss/
 	
 	<api-gateway:autodiscovery apiId="${api.autodiscovery.currentStock.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="12d5c9f5-a9c3-4e7a-9363-7d1d986c9570" flowRef="sgst-sd-edi-main-current-stock" />
 	<api-gateway:autodiscovery apiId="${api.autodiscovery.3pl.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="103bd051-7f1f-42a4-8af7-be422b866103" flowRef="sgst-sd-edi-main-3pl" />
+	<anypoint-mq:config name="Anypoint_MQ_Config" doc:name="Anypoint MQ Config" doc:id="7e99db82-03a1-40d1-9946-52a8725b8a4a" >
+		<anypoint-mq:connection clientId="${amq.email.publish.client.id}" clientSecret="${secure::amq.email.publish.client.secret}" url="${amq.email.publish.url}"/>
+	</anypoint-mq:config>
 	<error-handler name="common-soap-exception-handler" doc:id="23a76056-bf9e-4bef-8f8a-21317537ce91" >
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="aa46a0d7-c98c-4b3b-a274-27b72268e942" type="ANY" when="attributes.maskedRequestPath contains('DoOwnershipChangeResponse')">
 			<json-logger:logger doc:name="Logger" doc:id="721b5347-5c42-4d5b-8e98-112672c50c69" config-ref="JSON_Logger_Config" message="API FAILURE: Error occured for thirdPartyLogistics" tracePoint="EXCEPTION" correlationId="#[vars.transactionId]">
@@ -263,7 +266,7 @@ timestamp :now()
 			</ee:variables>
 			
 </ee:transform>
-		<json-logger:logger doc:name="Logger" doc:id="12dc725b-80a8-42f8-8001-be80528e52e7" config-ref="JSON_Logger_Config" message='#["Exception occurred processing the transaction for correlation Id " ++ vars.transactionID]' tracePoint="EXCEPTION" priority="ERROR" correlationId="#[vars.transactionId]">
+		<json-logger:logger doc:name="Log Exception" doc:id="12dc725b-80a8-42f8-8001-be80528e52e7" config-ref="JSON_Logger_Config" message='Exception occurred processing the transaction.' tracePoint="EXCEPTION" priority="ERROR" correlationId="#[vars.transactionId]">
 		</json-logger:logger>
 	
 </sub-flow>
@@ -289,15 +292,41 @@ var seperator = "/"
 			<ee:variables >
 			</ee:variables>
 		</ee:transform>
-		<http:request method="POST" doc:name="send-email-notification" doc:id="73a83a94-6f32-40d5-a9d0-90ce2a79d4ef" config-ref="HTTP_Request_For_BackUPFile" path="${https.utilities.papi.path.notification}" outputMimeType="application/json" sendCorrelationId="ALWAYS">
-			<http:headers ><![CDATA[#[output application/java
+		<json-logger:logger doc:name="Log Publish" doc:id="f0777d3b-647d-49ee-a6e7-cf54a1486a5e" config-ref="JSON_Logger_Config" message="Initiated a call to MQ Publish Email Notification." tracePoint="BEFORE_REQUEST" correlationId="#[vars.transactionId]">
+			<json-logger:content ><![CDATA[#[%dw 2.0
+output application/json
 ---
 {
-
-"X-Client-ID": Mule::p('https.utilities.papi.clientId'),
-"X-Client-Secret": Mule::p('https.utilities.papi.clientSecret')
-}]]]></http:headers>
-		</http:request>
+   "flowDirection": Mule::p('api.flowDirection'),
+   "source": Mule::p('api.source'),
+   "target": vars.fileDetails.externalSystem default "",
+   "fileName": if(vars.fileDetails.flatFileName != null and vars.fileDetails.flatFileExtension != null)(vars.fileDetails.flatFileName as String ++ vars.fileDetails.flatFileExtension as String) else "" ,
+   "errorCode": "",
+   "errorMessage": "",
+   "subsidiary": vars.fileDetails.subsidiary,
+   "apiName": Mule::p('json.logger.application.name'),
+   "action": Mule::p('api.action.call-api'),
+   "status": Mule::p('api.status.initiate')
+}]]]></json-logger:content>
+		</json-logger:logger>
+		<anypoint-mq:publish doc:name="Publish" doc:id="b737f19a-84b9-479c-83b0-245a28033f61" config-ref="Anypoint_MQ_Config" destination="${amq.email.publish.path}" />
+		<json-logger:logger doc:name="Log Publish" doc:id="e4ad80a2-a481-430c-9f4f-bd06929df3fb" config-ref="JSON_Logger_Config" tracePoint="AFTER_REQUEST" message="Call to MQ Publish Email Notification completed successfully." correlationId="#[vars.transactionId]">
+			<json-logger:content ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+   "flowDirection": Mule::p('api.flowDirection'),
+   "source": Mule::p('api.source'),
+   "target": vars.fileDetails.externalSystem default "",
+   "fileName": if(vars.fileDetails.flatFileName != null and vars.fileDetails.flatFileExtension != null)(vars.fileDetails.flatFileName as String ++ vars.fileDetails.flatFileExtension as String) else "" ,
+   "errorCode": "",
+   "errorMessage": "",
+   "subsidiary": vars.fileDetails.subsidiary,
+   "apiName": Mule::p('json.logger.application.name'),
+   "action": Mule::p('api.action.call-api'),
+   "status": Mule::p('api.status.success')
+}]]]></json-logger:content>
+		</json-logger:logger>
 	</sub-flow>
 
 </mule>
