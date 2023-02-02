@@ -481,7 +481,7 @@ output application/json
 }]]]></json-logger:content>
 		</json-logger:logger>
 		
-				<http:request method="POST" doc:name="Call SAPI- Post Details to SAPI" doc:id="421d1689-36f1-4f43-a532-1cdd15355396" config-ref="HTTP_Request_For_SAPI" outputMimeType="application/xml" path="#[vars.httpConfig.path]" sendCorrelationId="ALWAYS">
+				<http:request method="POST" doc:name="Call SAPI- Post Details to SAPI" doc:id="421d1689-36f1-4f43-a532-1cdd15355396" config-ref="HTTP_Request_For_SAPI" outputMimeType="application/json" path="#[vars.httpConfig.path]" sendCorrelationId="ALWAYS">
 			<http:headers><![CDATA[#[output application/java
 ---
 {

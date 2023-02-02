@@ -88,7 +88,7 @@ http://www.mulesoft.org/schema/mule/wss http://www.mulesoft.org/schema/mule/wss/
 		<anypoint-mq:connection clientId="${amq.email.publish.client.id}" clientSecret="${secure::amq.email.publish.client.secret}" url="${amq.email.publish.url}"/>
 	</anypoint-mq:config>
 	<error-handler name="common-soap-exception-handler" doc:id="23a76056-bf9e-4bef-8f8a-21317537ce91" >
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="aa46a0d7-c98c-4b3b-a274-27b72268e942" type="ANY" when="attributes.maskedRequestPath contains('DoOwnershipChangeResponse')">
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="aa46a0d7-c98c-4b3b-a274-27b72268e942" type="ANY" when="attributes.rawRequestUri contains 'thirdPartyLogistics'">
 			<json-logger:logger doc:name="Logger" doc:id="721b5347-5c42-4d5b-8e98-112672c50c69" config-ref="JSON_Logger_Config" message="API FAILURE: Error occured for thirdPartyLogistics" tracePoint="EXCEPTION" correlationId="#[vars.transactionId]">
 				<json-logger:content ><![CDATA[#[%dw 2.0
 output application/json
@@ -138,7 +138,7 @@ soapenv#Envelope: {
 				<flow-ref doc:name="Route - Error Notification" doc:id="6cf74112-5eb8-44f3-86bc-ce932ec7a102" name="global-config-email-notification"/>
 			</async>
 		</on-error-propagate>
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="b448423a-e2c0-45f8-abb9-43aa79fbac4e" type="ANY" when="attributes.maskedRequestPath contains('OneRoofRequest')">
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="b448423a-e2c0-45f8-abb9-43aa79fbac4e" type="ANY" when="attributes.rawRequestUri contains 'currentStock'">
 			<json-logger:logger doc:name="Logger" doc:id="02908f97-d85f-4f57-9230-65269fb8a881" config-ref="JSON_Logger_Config" message="API FAILURE: Error occured for CurrentStock" tracePoint="EXCEPTION" correlationId="#[vars.transactionId]">
 				<json-logger:content ><![CDATA[#[%dw 2.0
 output application/json
