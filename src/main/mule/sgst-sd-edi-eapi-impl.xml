@@ -387,7 +387,7 @@ output application/json
 	"NSCcode": payload..OneRoofRequest.*NSCcode,
 	"NSCStorLocCode": payload..OneRoofRequest.*NSCStorLocCode,
 	"NSCMaterialNumber": payload..OneRoofRequest.*NSCMaterialNumber,
-	"MfgCode": payload..OneRoofRequest.DTS,
+	"MfgCode": payload..OneRoofRequest.MfgCode,
 	"MfgStorLocCode": payload..OneRoofRequest.*MfgStorLocCode,
 	"MfgMaterialNumber": payload..OneRoofRequest.*MfgMaterialNumber
 }]]></ee:set-payload>
