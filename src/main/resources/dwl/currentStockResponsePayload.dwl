@@ -8,7 +8,7 @@ soapenv#Envelope: {
   'soapenv:Body': {
   	pana#OneRoofRequestResponse: {
   		ErrorCode: payload..ErrorCode,
-  		ErrorMsg: ((payload.ErrorMsg default []) distinctBy ($)) reduce ((item, accumulator) -> item ++  " \n " ++ accumulator)
+  		ErrorMsg: payload.ErrorMsg 
   	}
   }
 }	

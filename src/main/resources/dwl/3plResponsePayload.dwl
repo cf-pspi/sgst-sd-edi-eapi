@@ -8,7 +8,7 @@ soapenv#Envelope: {
   'soapenv:Body': {
   	pana#DoOwnershipChangeResponseResponse: {
   		RespCode: payload..RespCode,
-  		RespMsg: ((payload.RespMsg default []) distinctBy ($)) reduce ((item, accumulator) -> item ++  " \n " ++ accumulator)
+  		RespMsg: payload.RespMsg
   	}
   }
 }	
