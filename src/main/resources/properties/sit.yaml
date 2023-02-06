@@ -58,9 +58,9 @@ https:
         
   oneroof:
     sapi:
-      client_id: 'cb6fea3d3d814a43a7042b301698194d'
-      client_secret: '671B051dA51146B8A6eA36490C1B2F05'
-      host: 'sgst-sd-sap-sapi-owdzoy.internal-cci3mz.sgp-s1.cloudhub.io'
+      client_id: '63e7c66f6826433690f5ddc4c27b69fb'
+      client_secret: '969b39bC28104Ef1Ab2FC8Fa41e93210'
+      host: 'sgst-sd-sap-sapi-sit-owdzoy.internal-cci3mz.sgp-s1.cloudhub.io'
       port: '8081' 
       basepath: '/api/v1'
       3pl:    
@@ -89,9 +89,9 @@ json:
     
 http:              
   oneroof:
-    client_id: 'cb6fea3d3d814a43a7042b301698194d'
-    client_secret: '671B051dA51146B8A6eA36490C1B2F05'
-    host: 'sgst-sd-sap-sapi-owdzoy.internal-cci3mz.sgp-s1.cloudhub.io'
+    client_id: '63e7c66f6826433690f5ddc4c27b69fb'
+    client_secret: '969b39bC28104Ef1Ab2FC8Fa41e93210'
+    host: 'sgst-sd-sap-sapi-siit-owdzoy.internal-cci3mz.sgp-s1.cloudhub.io'
     port: '8081' 
     basepath: '/api/v1'
     3pl:    
