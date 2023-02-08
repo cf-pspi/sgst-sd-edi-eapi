@@ -91,7 +91,7 @@ http:
   oneroof:
     client_id: '63e7c66f6826433690f5ddc4c27b69fb'
     client_secret: '969b39bC28104Ef1Ab2FC8Fa41e93210'
-    host: 'sgst-sd-sap-sapi-siit-owdzoy.internal-cci3mz.sgp-s1.cloudhub.io'
+    host: 'sgst-sd-sap-sapi-sit-owdzoy.internal-cci3mz.sgp-s1.cloudhub.io'
     port: '8081' 
     basepath: '/api/v1'
     3pl:    
@@ -116,7 +116,7 @@ currentStock:
 #Notification Configuration
 amq:
   email:
-    toaddress: ['pavan.ramadugula@sg.panasonic.com']
+    toaddress: ['pavan.ramadugula@sg.panasonic.com', 'ankita.rai@sg.panasonic.com', 'umamaheswara.karanam@sg.panasonic.com', 'putta.sarveswerarao@sg.panasonic.com']
     publish: 
       url: 'https://mq-us-east-1.anypoint.mulesoft.com/api/v1'
       path: 'mq-common-audit'
