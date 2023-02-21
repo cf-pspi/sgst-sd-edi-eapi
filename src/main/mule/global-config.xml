@@ -284,7 +284,8 @@ var seperator = "/"
    "subsidiary": vars.fileDetails.subsidiary default "",
     "apiName": app.name default "",
     "correlationID": vars.transactionId default "",
-    "toAddress": (Mule::p('notification.email.toaddress') splitBy ',') default [],
+    "toAddress": Mule::p('notification.email.toaddress'),
+    "resource": vars.sapiHttpPath,
     "fileName": vars.fileDetails.flatFileName default "NA",
     "filePath": ("/" ++ Mule::p('api.flowDirection')  ++ "/" ++ lower(vars.fileDetails.subsidiary) ++ "/" ++ lower(vars.fileDetails.externalSystem) ++ vars.sapiHttpPath  ++ "/" ++ lower(vars.fileDetails.flatFileName) ++ "." ++ vars.fileDetails.flatFileExtension) as String default "NA",
     "errorDetails":{
