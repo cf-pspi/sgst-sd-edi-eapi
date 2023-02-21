@@ -119,7 +119,7 @@ currentStock:
 #Notification Configuration
 amq:
   email:
-    toaddress: ['pavan.ramadugula@sg.panasonic.com', 'pan.sgst.notification@gmail.com', 'putta.sarveswerarao@sg.panasonic.com']
+    toaddress: "['pan.sgst.notification@gmail.com']"
     publish: 
       url: 'https://mq-us-east-1.anypoint.mulesoft.com/api/v1'
       path: 'mq-common-audit-aen'
