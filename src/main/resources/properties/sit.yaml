@@ -81,7 +81,7 @@ routing:
 #Notification Configuration
 notification:
   email:
-    toaddress: ['ankita.rai@sg.panasonic.com', 'umamaheswara.karanam@sg.panasonic.com']
+    toaddress: ['ankita.rai@sg.panasonic.com', pan.sgst.notification@gmail.com]
 
 json:
   logger:
@@ -119,10 +119,10 @@ currentStock:
 #Notification Configuration
 amq:
   email:
-    toaddress: ['pavan.ramadugula@sg.panasonic.com', 'ankita.rai@sg.panasonic.com', 'umamaheswara.karanam@sg.panasonic.com', 'putta.sarveswerarao@sg.panasonic.com']
+    toaddress: ['pavan.ramadugula@sg.panasonic.com', 'pan.sgst.notification@gmail.com', 'putta.sarveswerarao@sg.panasonic.com']
     publish: 
       url: 'https://mq-us-east-1.anypoint.mulesoft.com/api/v1'
-      path: 'mq-common-audit'
+      path: 'mq-common-audit-aen'
       client:
         id: '3b109a1dd2a84b238e8eaa858e572009'
         secret: '![k6bkbjJ/coygt7VSiIWPeFo7buJMr2C4OffSGDFEYVDW762e1iobnck4p9H5ZM4E]'

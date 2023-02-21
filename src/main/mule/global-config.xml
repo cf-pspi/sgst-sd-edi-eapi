@@ -278,6 +278,10 @@ output application/json
 var seperator = "/"
 ---
 {
+	"flowDirection": Mule::p('api.oneRoof.flowDirection'),
+   "source": Mule::p('api.oneRoof.source'),
+   "target": Mule::p('api.oneRoof.target') default "",
+   "subsidiary": vars.fileDetails.subsidiary default "",
     "apiName": app.name default "",
     "correlationID": vars.transactionId default "",
     "toAddress": (Mule::p('notification.email.toaddress') splitBy ',') default [],
