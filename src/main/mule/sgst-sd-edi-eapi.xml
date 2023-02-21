@@ -42,16 +42,8 @@ uuid()]]></ee:set-variable>
 			<ee:message >
 			</ee:message>
 			<ee:variables >
-				<ee:set-variable variableName="fileDetails" ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"externalSystem": "PBS",
-	"flatFileName": "3PL" ++ "_" ++ now() as String {format: "YYYYMMDDHHmmSS"},
-	"fileExtension": ".txt",
-	"subsidiary": "NA"
-}]]></ee:set-variable>
 				<ee:set-variable variableName="transactionId" ><![CDATA[uuid()]]></ee:set-variable>
+				<ee:set-variable variableName="originalPayload" ><![CDATA[payload]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<apikit-soap:router config-ref="soapkit-config">
@@ -81,21 +73,17 @@ output application/json
 			<ee:message >
 			</ee:message>
 			<ee:variables >
-				<ee:set-variable variableName="fileDetails" ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"externalSystem": "PBS",
-	"flatFileName": "CurrentStock" ++ "_" ++ now() as String {format: "YYYYMMDDHHmmSS"},
-	"fileExtension": ".txt",
-	"subsidiary": "NA"
-}]]></ee:set-variable>
 				<ee:set-variable variableName="transactionId" ><![CDATA[uuid()]]></ee:set-variable>
+				<ee:set-variable variableName="originalPayload" ><![CDATA[payload]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<apikit-soap:router config-ref="soapkit-config-currentStock">
-            <apikit-soap:attributes><![CDATA[#[%dw 2.0
-              output application/java
+		<apikit-soap:router config-ref="soapkit-config-currentStock" outputMimeType="application/xml">
+            <apikit-soap:message ><![CDATA[#[%dw 2.0
+output application/xml
+---
+payload]]]></apikit-soap:message>
+			<apikit-soap:attributes><![CDATA[#[%dw 2.0
+              output application/json
               ---
               {
                   headers: attributes.headers,

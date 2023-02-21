@@ -25,7 +25,10 @@ api:
       complete: 'COMPLETE' 
   oneRoof:         
     flowDirection: 'inbound'
-    source: 'OneRoof'
+    source: 'ONEROOF'
+    target: 'SAP'
+    flatFileExtension: '.xml'
+    subsidiary: 'PAPVN-TL1'
   name: 'sgst-sd-edi-eapi'
 
  

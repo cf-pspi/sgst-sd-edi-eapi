@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger" xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq"
-	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:compression="http://www.mulesoft.org/schema/mule/compression" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
+	xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:compression="http://www.mulesoft.org/schema/mule/compression" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/compression http://www.mulesoft.org/schema/mule/compression/current/mule-compression.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd
-http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd">
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
 	<sub-flow name="sgst-sd-edi-eapi-impl-flow" doc:id="1e8db879-7c4a-4cbc-8cf4-7b59b3a5f4eb" >
 		<ee:transform doc:name="initialise - Variables" doc:id="dfbb19b0-c67c-46d0-8274-e31fae46b1e1">
 			<ee:message />
@@ -108,9 +109,9 @@ output application/json
 output application/json
 ---
 {
-   "flowDirection": Mule::p('api.flowDirection'),
-   "source": Mule::p('api.source'),
-   "target": vars.fileDetails.externalSystem default "",
+   "flowDirection": if (vars.fileDetails.externalSystem == "ONEROOF") Mule::p('api.oneRoof.flowDirection') else Mule::p('api.flowDirection'),
+   "source": if (vars.fileDetails.externalSystem == "ONEROOF") Mule::p('api.oneRoof.source') else Mule::p('api.source'),
+   "target": if (vars.fileDetails.externalSystem == "ONEROOF") Mule::p('api.oneRoof.target') else vars.fileDetails.externalSystem default "",
    "fileName": if(vars.fileDetails.flatFileName != null and vars.fileDetails.flatFileExtension != null)(vars.fileDetails.flatFileName as String ++ vars.fileDetails.flatFileExtension as String) else "" ,
    "errorCode": "",
    "errorMessage": "",
@@ -121,9 +122,9 @@ output application/json
 }]]]></json-logger:content>
 		</json-logger:logger>
 		<http:request method="POST" doc:name="Call PCS Backup" doc:id="3ae19d80-071e-4755-a80c-0529366c9f06" config-ref="HTTP_Request_For_BackUPFile" path="${https.utilities.papi.path.backup}" outputMimeType="multipart/form-data" sendCorrelationId="ALWAYS">
-					<http:body ><![CDATA[#[vars.pcsBackup]]]></http:body>
+			<http:body ><![CDATA[#[vars.pcsBackup]]]></http:body>
 			<http:headers><![CDATA[#[{
-"direction": Mule::p('api.flowDirection'),
+"direction": if (vars.fileDetails.externalSystem == "ONEROOF") Mule::p('api.oneRoof.flowDirection') else Mule::p('api.flowDirection'),
 "correlationID" :vars.transactionId,
 "externalSystem" : vars.fileDetails.externalSystem,
 "fileType" : vars.sapiHttpPath replace "/" with "" ,
@@ -139,9 +140,9 @@ output application/json
 output application/json
 ---
 {
-   "flowDirection": Mule::p('api.flowDirection'),
-   "source": Mule::p('api.source'),
-   "target": vars.fileDetails.externalSystem default "",
+     "flowDirection": if (vars.fileDetails.externalSystem == "ONEROOF") Mule::p('api.oneRoof.flowDirection') else Mule::p('api.flowDirection'),
+   "source": if (vars.fileDetails.externalSystem == "ONEROOF") Mule::p('api.oneRoof.source') else Mule::p('api.source'),
+   "target": if (vars.fileDetails.externalSystem == "ONEROOF") Mule::p('api.oneRoof.target') else vars.fileDetails.externalSystem default "",
    "fileName": if(vars.fileDetails.flatFileName != null and vars.fileDetails.flatFileExtension != null)(vars.fileDetails.flatFileName as String ++ vars.fileDetails.flatFileExtension as String) else "" ,
    "errorCode": "",
    "errorMessage": "",
@@ -262,9 +263,9 @@ timestamp :now()
 output application/json
 ---
 {
-   "flowDirection": Mule::p('api.oneRoof.flowDirection'),
+"flowDirection": Mule::p('api.oneRoof.flowDirection'),
    "source": Mule::p('api.oneRoof.source'),
-   "target": vars.fileDetails.externalSystem default "",
+   "target": Mule::p('api.oneRoof.target') default "",
    "fileName": if(vars.fileDetails.flatFileName != null and vars.fileDetails.flatFileExtension != null)(vars.fileDetails.flatFileName as String ++ vars.fileDetails.flatFileExtension as String) else "" ,
    "errorCode": "",
    "errorMessage": "",
@@ -275,66 +276,29 @@ output application/json
 }]]]></json-logger:content>
 		</json-logger:logger>
 		
-		<ee:transform doc:name="Set payload to send to SAPI" doc:id="a7342f97-30cc-469d-b2be-5d289193d710" >
+		<ee:transform doc:name="Transform Message" doc:id="576eee6b-a352-4d30-93fc-2246b1010d8c" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-    "CompanyCodeList": payload..DoOwnershipChangeResponse.*CompanyCodeList, 
-    "DoNumberList": payload..DoOwnershipChangeResponse.*DoNumberList
-}]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
-				<ee:set-variable variableName="httpConfig" ><![CDATA[output application/json
----
-{ 
-	host:  Mule::p('https.oneroof.sapi.host'),
-	port:  Mule::p('https.oneroof.sapi.port'),
-	basepath:  Mule::p('https.oneroof.sapi.basepath'),
-	path:  Mule::p('https.oneroof.sapi.3pl.path')	
-}]]></ee:set-variable>
 				<ee:set-variable variableName="fileDetails" ><![CDATA[%dw 2.0
 output application/json
 ---
 {
-	"externalSystem": "PBS",
-	"flatFileName": "3PL" ++ "_" ++ now() as String {format: "YYYYMMDDHHmmSS"},
-	"flatFileFormat": "TXT",
-	"flatFileExtension": ".txt",
-	"subsidiary": "PAPVN-TL1"
+    "subsidiary":  if(payload..CompanyCodeList contains "VN11") "PAPVN-TL1" else if(payload..CompanyCodeList contains "VN12") "PAPVN-TL2" else "NO-SUBSIDIARY",
+    "externalSystem": Mule::p('api.oneRoof.source'),
+    "flatFileName":  "3PL" ++ "_" ++ now() as String {format: "YYYYMMDDHHmmSS"} ++ "_" ++ vars.transactionId default "",
+    "flatFileFormat": Mule::p('https.oneroof.sapi.3pl.path') replace "/" with "",
+    "flatFileExtension":  Mule::p('api.oneRoof.flatFileExtension')
 }]]></ee:set-variable>
 				<ee:set-variable variableName="sapiHttpPath" ><![CDATA[%dw 2.0
 output application/java
 ---
 Mule::p('https.oneroof.sapi.3pl.path')]]></ee:set-variable>
-				<ee:set-variable variableName="pcsBackupPayload" ><![CDATA[%dw 2.0
-output multipart/form-data
-input payload application/json
----
-{
-    parts : {
-        File : {
-            headers : {
-                "Content-Disposition" : {
-                    "name": "File",
-                    "filename": "3PL" ++ "_" ++ now() as String {format: "YYYYMMDDHHmmSS"}
-                    },
-                "Content-Type" : "application/json"
-                },
-            content : payload..Body
-            }
-        }
-}]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<async doc:name="Async" doc:id="c47d9195-8299-4843-9dc5-490f2d5a8f80" >
 			<compression:compress doc:name="Compress" doc:id="e96b09db-b1b6-437a-8ad4-7aff18c721b8" target="compressFile">
-				<compression:content ><![CDATA[#[%dw 2.0
-output application/java
-input payload multipart/form-data
----
-vars.pcsBackupPayload]]]></compression:content>
+				<compression:content ><![CDATA[#[vars.originalPayload]]]></compression:content>
 				<compression:compressor>
 					<compression:zip-compressor />
 				</compression:compressor>
@@ -346,24 +310,54 @@ vars.pcsBackupPayload]]]></compression:content>
 					<ee:set-variable variableName="pcsBackup" ><![CDATA[%dw 2.0
 output multipart/form-data
 ---
-{"parts": 
-	{"File" : 
-		{"headers": 
-			{"Content-Type": "application/zip"},
-			"content": vars.compressFile
-		},
-		"EDIMsgHeader": {"headers": 
-			{"Content-Type": "application/json"},
-			"content": vars.fileDetails
+{
+    parts : {
+        File : {
+            headers : {
+                "Content-Disposition" : {
+                    "name": "File",
+                    "filename": "3PL" ++ "_" ++ now() as String {format: "YYYYMMDDHHmmSS"} ++ ".zip"
+                    },
+                "Content-Type" : "application/zip"
+                },
+            content : vars.compressFile
+            },
+            "EDIMsgHeader": {
+            	"headers": {
+            		"Content-Type": "application/json"
+                          	},
+            	"content": vars.fileDetails
+            }
+        
 		}
-	}
-}			
-    
-		]]></ee:set-variable>
+
+}]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 			<flow-ref doc:name="Backup file in PCS" doc:id="006c5187-a09a-4e3c-9b1c-98f34b9af4de" name="sgst-sd-edi-impl-api-impl-backUp-flow" />
 		</async>
+		<ee:transform doc:name="Set payload to send to SAPI" doc:id="a7342f97-30cc-469d-b2be-5d289193d710">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+ns pana http://SOA/Pana_APAC_OneRoof.WebServices:DoOwnershipChangeResponse
+---
+{
+    "CompanyCodeList": payload..pana#DoOwnershipChangeResponse.*CompanyCodeList, 
+    "DoNumberList": payload..pana#DoOwnershipChangeResponse.*DoNumberList
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="httpConfig"><![CDATA[output application/json
+---
+{ 
+	host:  Mule::p('https.oneroof.sapi.host'),
+	port:  Mule::p('https.oneroof.sapi.port'),
+	basepath:  Mule::p('https.oneroof.sapi.basepath'),
+	path:  Mule::p('https.oneroof.sapi.3pl.path')	
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
 		<flow-ref doc:name="Call to SAPI" doc:id="c9cddaf0-b7c5-41c2-b6f0-6e9c6f80caa9" name="sgst-sd-edi-eapi-impl-sap-sapi-flow"/>
 		<ee:transform doc:name="Frame - Response" doc:id="cc293bc7-e5c0-4936-98bf-d9e1e4a56c0a">
 			<ee:message>
@@ -377,7 +371,7 @@ output application/json
 {
    "flowDirection": Mule::p('api.oneRoof.flowDirection'),
    "source": Mule::p('api.oneRoof.source'),
-   "target": vars.fileDetails.externalSystem default "",
+   "target": Mule::p('api.oneRoof.target') default "",
    "fileName": if(vars.fileDetails.flatFileName != null and vars.fileDetails.flatFileExtension != null)(vars.fileDetails.flatFileName as String ++ vars.fileDetails.flatFileExtension as String) else "" ,
    "errorCode": "",
    "errorMessage": "",
@@ -397,7 +391,7 @@ output application/json
 {
    "flowDirection": Mule::p('api.oneRoof.flowDirection'),
    "source": Mule::p('api.oneRoof.source'),
-   "target": vars.fileDetails.externalSystem default "",
+   "target": Mule::p('api.oneRoof.target') default "",
    "fileName": if(vars.fileDetails.flatFileName != null and vars.fileDetails.flatFileExtension != null)(vars.fileDetails.flatFileName as String ++ vars.fileDetails.flatFileExtension as String) else "" ,
    "errorCode": "",
    "errorMessage": "",
@@ -407,74 +401,31 @@ output application/json
    "status": Mule::p('api.status.init')
 }]]]></json-logger:content>
 		</json-logger:logger>
-		
-		<ee:transform doc:name="Set payload to send to SAPI" doc:id="ed806eac-9c9e-4152-8ced-d5c9c08234bd" >
+		<ee:transform doc:name="Transform Message" doc:id="448c9a74-75ab-45b0-bf3b-edcceaf410f1" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"DTS": payload..OneRoofRequest.DTS,
-	"TypeOfData": payload..OneRoofRequest.TypeOfData,
-	"ReportRequestID": payload..OneRoofRequest.ReportRequestID,
-	"NSCcode": payload..OneRoofRequest.*NSCcode,
-	"NSCStorLocCode": payload..OneRoofRequest.*NSCStorLocCode,
-	"NSCMaterialNumber": payload..OneRoofRequest.*NSCMaterialNumber,
-	"MfgCode": payload..OneRoofRequest.MfgCode,
-	"MfgStorLocCode": payload..OneRoofRequest.*MfgStorLocCode,
-	"MfgMaterialNumber": payload..OneRoofRequest.*MfgMaterialNumber
-}]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
-				<ee:set-variable variableName="httpConfig" ><![CDATA[output application/json
----
-{
-	host:  Mule::p('https.oneroof.sapi.host'),
-	port:  Mule::p('https.oneroof.sapi.port'),
-	basepath:  Mule::p('https.oneroof.sapi.basepath'),
-	path:  Mule::p('https.oneroof.sapi.currentStock.path')
-}]]></ee:set-variable>
 				<ee:set-variable variableName="fileDetails" ><![CDATA[%dw 2.0
 output application/json
 ---
 {
-	"externalSystem": "PBS",
-	"flatFileName": "CurrentStock" ++ "_" ++ now() as String {format: "YYYYMMDDHHmmSS"},
-	"flatFileFormat": "TXT",
-	"flatFileExtension": ".txt",
-	"subsidiary": "PAPVN-TL1"
+    "subsidiary": if(payload..MfgCode contains "VN11") "PAPVN-TL1" else if(payload..MfgCode contains "VN12") "PAPVN-TL2" else "NO-SUBSIDIARY",
+    "flatFileName":  "CurrentStock" ++ "_" ++ now() as String {format: "YYYYMMDDHHmmSS"} ++ "_" ++ vars.transactionId default "",
+    "flatFileFormat": Mule::p('https.oneroof.sapi.currentStock.path') replace "/" with "",
+    "externalSystem": Mule::p('api.oneRoof.source'),
+    "flatFileExtension":  Mule::p('api.oneRoof.flatFileExtension')
 }]]></ee:set-variable>
 				<ee:set-variable variableName="sapiHttpPath" ><![CDATA[%dw 2.0
 output application/java
 ---
 Mule::p('https.oneroof.sapi.currentStock.path')]]></ee:set-variable>
-				<ee:set-variable variableName="pcsBackupPayload" ><![CDATA[%dw 2.0
-output multipart/form-data
-input payload application/json
----
-{
-    parts : {
-        File : {
-            headers : {
-                "Content-Disposition" : {
-                    "name": "File",
-                    "filename": "CurrentStock" ++ "_" ++ now() as String {format: "YYYYMMDDHHmmSS"}
-                    },
-                "Content-Type" : "application/json"
-                },
-            content : payload..Body
-            }
-        }
-}]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<async doc:name="Async" doc:id="aca4c7bf-5e4f-4142-bf01-64dc7f01465c" >
 			<compression:compress doc:name="Compress" doc:id="d1c4bdd2-1c61-43b0-85f4-68e00d997901" target="compressFile">
-				<compression:content ><![CDATA[#[%dw 2.0
-output application/java
-input payload multipart/form-data
+				<compression:content ><![CDATA[#[output application/xml 
 ---
-vars.pcsBackupPayload]]]></compression:content>
+vars.originalPayload]]]></compression:content>
 				<compression:compressor>
 					<compression:zip-compressor />
 				</compression:compressor>
@@ -486,30 +437,61 @@ vars.pcsBackupPayload]]]></compression:content>
 					<ee:set-variable variableName="pcsBackup" ><![CDATA[%dw 2.0
 output multipart/form-data
 ---
-{"parts": 
-	{"File" : 
-		{"headers": 
-			{"Content-Type": "application/zip"},
-			"content": vars.compressFile
-		},
-		"EDIMsgHeader": {"headers": 
-			{"Content-Type": "application/json"},
-			"content": vars.fileDetails
+{
+    parts : {
+        File : {
+            headers : {
+                "Content-Disposition" : {
+                    "name": "File",
+                    "filename": "CurrentStock" ++ "_" ++ now() as String {format: "YYYYMMDDHHmmSS"} ++ ".zip"
+                    },
+                "Content-Type" : "application/zip"
+                },
+            content : vars.compressFile
+            },
+            "EDIMsgHeader": {
+            	"headers": {
+            		"Content-Type": "application/json"
+                          	},
+            	"content": vars.fileDetails
+            }
+        
 		}
-	}
-}		
-		
-		
-		
-		
 
-		
-    
-		]]></ee:set-variable>
+}]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 			<flow-ref doc:name="Backup file in PCS" doc:id="0353dd76-e031-43c3-892d-721ef577da2e" name="sgst-sd-edi-impl-api-impl-backUp-flow" />
 		</async>
+		<ee:transform doc:name="Set payload to send to SAPI" doc:id="ed806eac-9c9e-4152-8ced-d5c9c08234bd">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+ns pana http://Pana_APAC_OneRoof.WebServices:OneRoofRequest
+---
+{
+	"DTS": payload..pana#OneRoofRequest.DTS,
+	"TypeOfData": payload..pana#OneRoofRequest.TypeOfData,
+	"ReportRequestID": payload..pana#OneRoofRequest.ReportRequestID,
+	"NSCcode": payload..pana#OneRoofRequest.NSCcode,
+	"NSCStorLocCode": payload..pana#OneRoofRequest.*NSCStorLocCode,
+	"NSCMaterialNumber": payload..pana#OneRoofRequest.*NSCMaterialNumber,
+	"MfgCode": payload..pana#OneRoofRequest.MfgCode,
+	"MfgStorLocCode": payload..pana#OneRoofRequest.*MfgStorLocCode,
+	"MfgMaterialNumber": payload..pana#OneRoofRequest.*MfgMaterialNumber
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="httpConfig"><![CDATA[output application/json
+---
+{
+	host:  Mule::p('https.oneroof.sapi.host'),
+	port:  Mule::p('https.oneroof.sapi.port'),
+	basepath:  Mule::p('https.oneroof.sapi.basepath'),
+	path:  Mule::p('https.oneroof.sapi.currentStock.path')
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
 		<flow-ref doc:name="Call to SAPI" doc:id="358c9c42-1100-4d30-9e45-f3cd90d0a090" name="sgst-sd-edi-eapi-impl-sap-sapi-flow"/>
 		<ee:transform doc:name="Frame - Response" doc:id="adcef46f-2cb5-48aa-a564-f2d5d0d98b74">
 			<ee:message>
@@ -520,10 +502,9 @@ output multipart/form-data
 			<json-logger:content ><![CDATA[#[%dw 2.0
 output application/json
 ---
-{
-   "flowDirection": Mule::p('api.oneRoof.flowDirection'),
+{"flowDirection": Mule::p('api.oneRoof.flowDirection'),
    "source": Mule::p('api.oneRoof.source'),
-   "target": vars.fileDetails.externalSystem default "",
+   "target": Mule::p('api.oneRoof.target') default "",
    "fileName": if(vars.fileDetails.flatFileName != null and vars.fileDetails.flatFileExtension != null)(vars.fileDetails.flatFileName as String ++ vars.fileDetails.flatFileExtension as String) else "" ,
    "errorCode": "",
    "errorMessage": "",
@@ -553,7 +534,8 @@ output application/json
 }]]]></json-logger:content>
 		</json-logger:logger>
 		
-				<http:request method="POST" doc:name="Call SAPI- Post Details to SAPI" doc:id="421d1689-36f1-4f43-a532-1cdd15355396" config-ref="HTTP_Request_For_SAPI" outputMimeType="application/json" path="#[vars.httpConfig.path]" sendCorrelationId="ALWAYS">
+				<logger level="INFO" doc:name="Logger" doc:id="0b271873-2700-4755-9c4a-73ca981d6348" message="#[payload]"/>
+		<http:request method="POST" doc:name="Call SAPI- Post Details to SAPI" doc:id="421d1689-36f1-4f43-a532-1cdd15355396" config-ref="HTTP_Request_For_SAPI" outputMimeType="application/json" path="#[vars.httpConfig.path]" sendCorrelationId="ALWAYS">
 			<http:headers><![CDATA[#[output application/java
 ---
 {
