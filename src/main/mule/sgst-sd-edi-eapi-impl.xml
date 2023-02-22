@@ -185,7 +185,32 @@ output application/json
 }]]]></json-logger:content>
 				</json-logger:logger>
 				<http:request method="POST" doc:name="Call PAPI - Post File" doc:id="003eac06-6662-4b19-a44c-b10362c484b9" config-ref="HTTP_Request_For_PAPI" outputMimeType="multipart/form-data" path="${https.orders.papi.fplPath}" requestStreamingMode="ALWAYS">
-			<http:body><![CDATA[#[vars.initialPayload]]]></http:body>
+			<http:body><![CDATA[#[%dw 2.0
+output multipart/form-data
+var transHeader= {
+    "applicationIdCode": Mule::p('transHeader.appCode'),
+    "dataTypeCode": Mule::p('transHeader.dataCode')
+}
+---
+{
+    "parts": {
+        "File": {
+            "headers": vars.initialPayload.parts.'File'.headers,
+            "content": vars.initialPayload.parts.'File'.content
+        },
+        "EDIMsgHeader": {
+            "headers": vars.initialPayload.parts.'EDIMsgHeader'.headers,
+            "content": vars.initialPayload.parts.'EDIMsgHeader'.content
+        },
+        "TransmissionHeader": {
+            "headers": {
+            	"Content-Type": "application/json"
+            },
+            "content": transHeader
+         	
+        }
+    }
+}]]]></http:body>
 					<http:headers><![CDATA[#[output application/java
 ---
 {

@@ -126,4 +126,6 @@ amq:
       client:
         id: '3b109a1dd2a84b238e8eaa858e572009'
         secret: '![k6bkbjJ/coygt7VSiIWPeFo7buJMr2C4OffSGDFEYVDW762e1iobnck4p9H5ZM4E]'
-    
+transHeader:
+        appCode: '03'
+        dataCode: '379'    

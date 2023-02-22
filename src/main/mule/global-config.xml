@@ -278,16 +278,16 @@ output application/json
 var seperator = "/"
 ---
 {
-	"flowDirection": Mule::p('api.oneRoof.flowDirection'),
-   "source": Mule::p('api.oneRoof.source'),
-   "target": Mule::p('api.oneRoof.target') default "",
+	"flowDirection": if (vars.fileDetails.externalSystem == "ONEROOF") Mule::p('api.oneRoof.flowDirection') else Mule::p('api.flowDirection'),
+   "source": if (vars.fileDetails.externalSystem == "ONEROOF") Mule::p('api.oneRoof.source') else Mule::p('api.source'),
+   "target": if (vars.fileDetails.externalSystem == "ONEROOF") Mule::p('api.oneRoof.target') else vars.fileDetails.externalSystem default "",
    "subsidiary": vars.fileDetails.subsidiary default "",
     "apiName": app.name default "",
     "correlationID": vars.transactionId default "",
-    "toAddress": Mule::p('notification.email.toaddress'),
+    "toAddress": Mule::p('notification.email.toaddress') splitBy ",",
     "resource": vars.sapiHttpPath,
     "fileName": vars.fileDetails.flatFileName default "NA",
-    "filePath": ("/" ++ Mule::p('api.flowDirection')  ++ "/" ++ lower(vars.fileDetails.subsidiary) ++ "/" ++ lower(vars.fileDetails.externalSystem) ++ vars.sapiHttpPath  ++ "/" ++ lower(vars.fileDetails.flatFileName) ++ "." ++ vars.fileDetails.flatFileExtension) as String default "NA",
+    "filePath": ("/" ++ Mule::p('api.flowDirection')  ++ "/" ++ lower(vars.fileDetails.subsidiary default "")  ++ "/" ++ lower(vars.fileDetails.externalSystem default "") ++ vars.sapiHttpPath  ++ "/" ++ lower(vars.fileDetails.flatFileName default "") ++ "." ++ vars.fileDetails.flatFileExtension default "") as String default "NA",
     "errorDetails":{
         "errorCode": vars.errorNotification.errorCode default "",
         "errorDesc": vars.errorNotification.errorMessage default ""
