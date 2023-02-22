@@ -467,7 +467,7 @@ output multipart/form-data
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
-ns pana http://Pana_APAC_OneRoof.WebServices:OneRoofRequest
+ns pana http://SOA/Pana_APAC_OneRoof.WebServices:OneRoofRequest
 ---
 {
 	"DTS": payload..pana#OneRoofRequest.DTS,
