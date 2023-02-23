@@ -14,18 +14,9 @@ http://www.mulesoft.org/schema/mule/wss http://www.mulesoft.org/schema/mule/wss/
                 <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:error-response>
         </http:listener>
-        <ee:transform doc:name="Set TransactionId" doc:id="c0f806b4-cd4e-4885-9768-e26c335bc55e" >
-			<ee:message >
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="transactionId" ><![CDATA[%dw 2.0
-output application/java
----
-uuid()]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
+		<flow-ref doc:name="sgst-sd-edi-eapi-impl-convert-headers-to-kebabcase" doc:id="447eab87-9fdb-47a3-bc6e-60f82486dc5d" name="sgst-sd-edi-eapi-impl-convert-headers-to-kebabcase" />
 		<apikit:router config-ref="sgst-sd-edi-eapi-config" />
-        <error-handler ref="common-exception-handler" />
+		<error-handler ref="common-exception-handler" />
     </flow>
     <apikit-soap:config name="soapkit-config" port="${3pl.port}" service="${3pl.service}" wsdlLocation="${3pl.wsdl}" soapVersion="SOAP12"/>
     <flow name="sgst-sd-edi-main-3pl">

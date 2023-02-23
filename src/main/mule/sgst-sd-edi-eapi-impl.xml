@@ -587,6 +587,32 @@ output application/json
 }]]]></json-logger:content>
 		</json-logger:logger>
 	</sub-flow>
+	<sub-flow name="sgst-sd-edi-eapi-impl-convert-headers-to-kebabcase" doc:id="6fdb0512-ac9d-4ef6-af46-9f3b3bb886d8" >
+		<choice doc:name="Choice" doc:id="77a2c069-d3a4-45af-879b-147c7718cbf7" >
+			<when expression="#[sizeOf(payload.parts) != null and sizeOf(payload.parts) &gt; 0]" >
+				<ee:transform doc:name="Transform Message" doc:id="0b7807a1-7983-4156-9a41-294c0bbef56b" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output multipart/form-data
+---
+payload]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="transactionId" ><![CDATA[uuid()]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="a7a2ef7d-60d8-48bb-931b-09f6d3277de8" >
+					<ee:message />
+					<ee:variables >
+						<ee:set-variable variableName="transactionId" ><![CDATA[uuid()]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<json-logger:logger doc:name="Logger" doc:id="5168acfc-ab90-451f-a5fa-0c227420bf73" config-ref="JSON_Logger_Config" message="Not a multipart form  data request" correlationId="#[vars.TransactionID]" />
+			</otherwise>
+		</choice>
+	</sub-flow>
 	<!-- <sub-flow name="sgst-pp-edi-eapi-sending-email-notification-flow" doc:id="fbc2ba27-4e29-4d3b-81f4-3022e83402d5" >
 		<ee:transform doc:name="Frame Error Message" doc:id="ebebcb4d-9476-4725-b1c1-6f6c8aa86ecb" >
 			<ee:message >
