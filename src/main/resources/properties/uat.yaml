@@ -1,41 +1,131 @@
-##########HTTP Requester Configuration###################
-httpreq:
-  sftp:
-    papvntl1host: ""
-    papvntl2host: ""
-    pmpchost: ""
-    port: ""
-    path: ""
-    username: ""
-    password: ""
-  hulft:
-    host: ""
-    port: ""
-    path: ""
-    username: ""
-    password: ""
-  backup:
-    host: ""
-    port: ""
-    path: ""
-    username: ""
-    password: ""
-  response:
-    timeout: ""
-    buffer.size: "1024"
-  connection:
-    idle.timeout: "30000"
-  max.connections: "-1"
+#
+mule:
+  env: uat
 
-#############Anypoint MQ Configuration ##############################
-anypointmq:
-  clientid: "3b109a1dd2a84b238e8eaa858e572009"
-  clientsecret: "C569f53f48e44a0aA0c7EcA5115c872f"  
-  url: "https://mq-us-east-1.anypoint.mulesoft.com/api/v1"
-  destination: "mq-common-email-utility-sit"  
+#API Manager config
+api:
+  autodiscovery:
+    id: '18529190'
+    currentStock:
+      id: '18529726'
+    3pl:
+      id: '18529724'
+  flowDirection: 'outbound'
+  source: 'SAP'
+  action:
+      api-start: 'API START'
+      api-end: 'API END'
+      process: 'PROCESS'
+      call-api: 'CALL API'
+      call-extsys: 'CALL EXT-SYS'
+  status:
+      init: 'INIT'
+      success: 'SUCCESS'
+      failure: 'FAILURE'
+      complete: 'COMPLETE' 
+  oneRoof:         
+    flowDirection: 'inbound'
+    source: 'ONEROOF'
+    target: 'SAP'
+    flatFileExtension: '.xml'
+    subsidiary: 'PAPVN-TL1'
+  name: 'sgst-sd-edi-eapi'
 
-mule.env: "local"
-                            
-secret:
-   key: '![GmjenUtO6a1Q5t7umfwmSvcwAX/Hi2XUvySHc/0lJos=]'
-                                                                                                     
+ 
+# HTTP config
+https:
+  keystore:
+    path: 'keystores/${mule.env}-keystore.jks'
+    alias: 'servercert'
+    password: 'winter@123'
+
+  orders:    
+    papi:
+      clientId: '63e58a1260dc4565b884f5096f5a359c'
+      clientSecret: '![Xwq/AIeqnSBLcW5chk+wagByeIhKyy5sim1Zex5wwqidVWdFxlYmlvcEQYXr0Sgt]'
+      host: 'sgst-orders-edi-papi-uat-9lt5nh.internal-cci3mz.sgp-s1.cloudhub.io'
+      port: '8081'         
+      basepath: '/api/v1'
+      fplPath: '/fpl'   
+
+  utilities:    
+    papi:
+      clientId: '2610b48faec84f85b798eadc022ba956'
+      clientSecret: '3eCC8F1052D0437EBc17A745a1f8C2a7'
+      host: 'sgst-audit-papi-uat-9lt5nh.internal-cci3mz.sgp-s1.cloudhub.io'
+      port: '8081'   
+      basepath: '/api/v1'
+      path:
+        backup: '/backup'
+        notification: '/notification' 
+        
+  oneroof:
+    sapi:
+      client_id: '63e7c66f6826433690f5ddc4c27b69fb'
+      client_secret: '969b39bC28104Ef1Ab2FC8Fa41e93210'
+      host: 'sgst-sd-sap-sapi-sit-owdzoy.internal-cci3mz.sgp-s1.cloudhub.io'
+      port: '8081' 
+      basepath: '/api/v1'
+      3pl:    
+        path: '/third-party-logistics'
+      currentStock:    
+        path: '/current-stock'
+routing:
+  systems:
+    mm: 
+      po: ['EPRO','IPS']
+      pr: ['ECITA']
+    sd: ['SALES_EDI']
+    fi: ['CMS']
+          
+#Notification Configuration
+notification:
+  email:
+    toaddress: ['ankita.rai@sg.panasonic.com', pan.sgst.notification@gmail.com]
+
+json:
+  logger:
+    application:
+      version: '1.0'
+      name: 'sgst-sd-edi-eapi'
+    env: 'sit'
+    
+http:              
+  oneroof:
+    client_id: '63e7c66f6826433690f5ddc4c27b69fb'
+    client_secret: '969b39bC28104Ef1Ab2FC8Fa41e93210'
+    host: 'sgst-sd-sap-sapi-sit-owdzoy.internal-cci3mz.sgp-s1.cloudhub.io'
+    port: '8081' 
+    basepath: '/api/v1'
+    3pl:    
+      sapi:
+        path: '/third-party-logistics'   
+           
+    currentStock:    
+      sapi:
+          path: '/current-stock'
+          
+#WSDL Config:
+3pl:
+  wsdl: 'DoOwnershipChangeResponseSIT.wsdl'
+  service: 'Pana_APAC_OneRoof.WebServices.DoOwnershipChangeResponse'
+  port: 'Pana_APAC_OneRoof_WebServices_DoOwnershipChangeResponse_Port'
+  
+currentStock:
+  wsdl: 'OneRoofRequestSIT.wsdl'
+  service: 'Pana_APAC_OneRoof.WebServices.OneRoofRequest'
+  port: 'Pana_APAC_OneRoof_WebServices_OneRoofRequest_Port'
+
+#Notification Configuration
+amq:
+  email:
+    toaddress: ["pan.sgst.notification@gmail.com"]
+    publish: 
+      url: 'https://mq-us-east-1.anypoint.mulesoft.com/api/v1'
+      path: 'mq-common-audit-aen'
+      client:
+        id: '3b109a1dd2a84b238e8eaa858e572009'
+        secret: '![k6bkbjJ/coygt7VSiIWPeFo7buJMr2C4OffSGDFEYVDW762e1iobnck4p9H5ZM4E]'
+transHeader:
+        appCode: '03'
+        dataCode: '379'    
